@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="camera_vision_globale" pkg="vision" type="vision_globale.py" />
+    <node name="camera_prelevement" pkg="vision" type="prelevement.py" />
+    <node name="camera_coude" pkg="vision" type="coude.py" />
+    <node name="camera_pince" pkg="vision" type="pince.py" />
+</launch>

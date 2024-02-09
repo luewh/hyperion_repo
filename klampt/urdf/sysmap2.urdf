@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- V2 : casque hyperion enlevé -->
+<robot name="sysmap">
+
+    <link name="world"/>
+    
+    <link name="platine">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\1_Platine_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\1_Platine_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="aileron">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\2_SupportAileron_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\2_SupportAileron_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="stockage">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\3_ZoneStockageV6_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\3_ZoneStockageV6_only_optimized.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="electrique">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\5_ZoneElec_only_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\5_ZoneElec_only_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="batterie">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\6_ZoneBatterie.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\6_ZoneBatterie_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="base">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_1_scara_base_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_1_scara_base_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="colonne">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_2_scara_colonne_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_2_scara_colonne_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="interne">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_3_scara_interne_V2_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_3_scara_interne_V2_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="externe">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_4_scara_externe_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_4_scara_externe_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="poigner">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_5_scara_poigner_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_5_scara_poigner_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="verin">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_6_scara_verin_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_6_scara_verin_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="pince">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_ferme_optimized.stl" />
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_ferme_convexHull2.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="world_platine" type="fixed">
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="world"/>
+        <child link="platine"/>
+    </joint>
+
+    <joint name="platine_aileron" type="fixed">
+        <origin xyz="-0.42 0.042 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="platine"/>
+        <child link="aileron"/>
+    </joint>
+
+    <joint name="platine_stockage" type="fixed">
+        <origin xyz="-0.2789 -0.06397 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="platine"/>
+        <child link="stockage"/>
+    </joint>
+
+    <joint name="platine_electrique" type="fixed">
+        <origin xyz="-0.1179 -0.004 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="platine"/>
+        <child link="electrique"/>
+    </joint>
+
+    <joint name="platine_batterie" type="fixed">
+        <origin xyz="0.110 0.276 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="platine"/>
+        <child link="batterie"/>
+    </joint>
+
+    <joint name="platine_base" type="fixed">
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="platine"/>
+        <child link="base"/>
+    </joint>
+
+    <joint name="base_colonne" type="revolute">
+        <origin xyz="0.0 0.0 0.03" rpy="0.0 0.0 0.0"/>
+        <parent link="base"/>
+        <child link="colonne"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-6" upper="6" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="colonne_interne" type="prismatic">
+        <origin xyz="0.0 0.0 0.391" rpy="0.0 0.0 0.0"/>
+        <parent link="colonne"/>
+        <child link="interne"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-0.309" upper="0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="interne_externe" type="revolute">
+        <origin xyz="0.214559 0.163904 -0.005" rpy="0.0 0.0 0.0"/>
+        <parent link="interne"/>
+        <child link="externe"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-2.1" upper="2.56" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="externe_poigner" type="revolute">
+        <origin xyz="0.29117 0.13275 0.030" rpy="0.0 0.0 0.0"/>
+        <parent link="externe"/>
+        <child link="poigner"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-3" upper="3" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="poigner_verin" type="prismatic">
+        <origin xyz="0.0 0.0 -0.083" rpy="0.0 0.0 0.0"/>
+        <parent link="poigner"/>
+        <child link="verin"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-0.15" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="verin_pince" type="fixed">
+        <origin xyz="0.0 0.0 -0.025" rpy="-1.57 0.0 0.0"/>
+        <parent link="verin"/>
+        <child link="pince"/>
+    </joint>
+
+    <klampt package_root="./" flip_yz="1" use_vis_geom="1"  freeze_root_link="0" >
+</robot>

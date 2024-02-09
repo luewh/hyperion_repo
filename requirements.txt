@@ -1,0 +1,5 @@
+klampt
+pyopengl
+pyqt5
+pymeshlab
+pygame

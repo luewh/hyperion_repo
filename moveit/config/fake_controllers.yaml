@@ -1,0 +1,15 @@
+controller_list:
+  - name: fake_scara_arm_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - base_colonne
+      - colonne_interne
+      - interne_externe
+      - externe_poigner
+  - name: fake_scara_hand_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - poigner_verin
+initial:  # Define initial robot poses per group
+  - group: scara_arm
+    pose: home

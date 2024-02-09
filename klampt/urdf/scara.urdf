@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="scara">
+
+    <link name="world"/>
+
+    <link name="base">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_1_scara_base_optimized.stl"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <link name="colonne">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_2_scara_colonne_optimized.stl"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <link name="interne">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_3_scara_interne_optimized.stl"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <link name="externe">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_4_scara_externe_optimized.stl"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <link name="poigner">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_5_scara_poigner_optimized.stl"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <link name="verin">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_6_scara_verin_optimized.stl"/>
+            </geometry>
+        </visual>
+    </link>
+
+    <link name="pince">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_ferme_optimized.stl" />
+            </geometry>
+        </visual>
+    </link>
+
+    <joint name="world_base" type="fixed">
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="world"/>
+        <child link="base"/>
+    </joint>
+
+    <joint name="base_colonne" type="revolute">
+        <origin xyz="0.0 0.0 0.03" rpy="0.0 0.0 0.0"/>
+        <parent link="base"/>
+        <child link="colonne"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-3" upper="3" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="colonne_interne" type="prismatic">
+        <origin xyz="0.0 0.0 0.391" rpy="0.0 0.0 0.0"/>
+        <parent link="colonne"/>
+        <child link="interne"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-0.309" upper="0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="interne_externe" type="revolute">
+        <origin xyz="0.214559 0.163904 -0.005" rpy="0.0 0.0 0.0"/>
+        <parent link="interne"/>
+        <child link="externe"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-1.64" upper="2.08" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="externe_poigner" type="revolute">
+        <origin xyz="0.29117 0.13275 0.030" rpy="0.0 0.0 0.0"/>
+        <parent link="externe"/>
+        <child link="poigner"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-3" upper="3" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="poigner_verin" type="prismatic">
+        <origin xyz="0.0 0.0 -0.083" rpy="0.0 0.0 0.0"/>
+        <parent link="poigner"/>
+        <child link="verin"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="-0.15" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="verin_pince" type="fixed">
+        <origin xyz="0.0 0.0 -0.025" rpy="-1.57 0.0 0.0"/>
+        <parent link="verin"/>
+        <child link="pince"/>
+    </joint>
+
+    <klampt package_root="./" flip_yz="1" use_vis_geom="1"  freeze_root_link="0" >
+</robot>

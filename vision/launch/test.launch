@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="test" pkg="vision" type="image_publisher.py" output="log"/>
+    <node pkg="rviz" type="rviz" name="IHM_CAMERA" args="-d $(find vision)/config/vision.rviz"/>
+</launch>
