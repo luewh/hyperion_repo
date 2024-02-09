@@ -2,8 +2,10 @@ import rospy
 import moveit_commander
 # import moveit_msgs.msg
 import sys
+import os
 import copy
 from time import sleep
+from threading import Thread, Event
 
 from joystick import Joystick
 from euler_quaternion import euler_to_quaternion, quaternion_to_euler
@@ -31,15 +33,12 @@ class Joystick_MoveGroupe (Joystick):
         
         self.scale_pos = scale_pos
         self.scale_rotation = scale_rotation
-        posEch1 = [3.64,0,-2.09,-1.51,0]
-        posEch2 = [3.29,0,-2.09,-1.17,0]
-        posEch3 = [2.91,0,-1.89,-0.99,0]
-        self.poseEch = [posEch1,posEch2,posEch3]
-        posStock1 = [3.69,0,-1.72,-1.73,0]
-        posStock2 = [3.30,0,-1.68,-1.37,0]
-        posStock3 = [2.87,0,-1.41,-0.46,0]
-        self.poseStock = [posStock1,posStock2,posStock3]
-        self.inPreleve = False
+        self.echPose = [[3.64,0,-2.09,-1.51,0],
+                        [3.29,0,-2.09,-1.17,0],
+                        [2.91,0,-1.89,-0.99,0]]
+        self.stockPose = [[3.69,0,-1.72,-1.73,0],
+                          [3.30,0,-1.68,-1.37,0],
+                          [2.87,0,-1.41,-0.46,0]]
 
     def armMove (self,pose):
         if pose == [0,0,0]:
@@ -98,28 +97,116 @@ class Joystick_MoveGroupe (Joystick):
             current_joints[0] += self.rotation_base_vitesse * self.scale_rotation
             self.move_group_arm.go(current_joints, wait=True)
     
+    def pickDropMove(self, pickPose, pickDist, pick: bool, event: Event):
+        self.move_group_arm.stop()
+        self.move_group_hand.stop()
+        
+        # verin go top
+        if event.is_set():
+            return
+        self.move_group_hand.go([0], wait=True)
+        
+        # # colone go top
+        # current_joints = self.move_group_arm.get_current_joint_values()
+        # current_joints[1] = 0
+        # self.move_group_arm.go(current_joints, wait=True)
+        
+        # arm go prelevement pose
+        if event.is_set():
+            return
+        self.move_group_arm.go(pickPose[:-1], wait=True)
+        
+        if pick:
+            # TODO open pince
+            print("open pince")
+        else:
+            # TODO close pince
+            pass
+            
+        
+        # arm down cartesian
+        pose = self.move_group_arm.get_current_pose().pose
+        pose.position.z -= pickDist
+        (plan, fraction) = self.move_group_arm.compute_cartesian_path([pose], 0.05, 0, avoid_collisions=True)
+        if event.is_set():
+            return
+        self.move_group_arm.execute(plan, wait=True)
+        
+        if pick:
+            # TODO close pince
+            print("close pince")
+        else:
+            # TODO open pince
+            print("open pince")
+        
+        # arm up cartesian
+        pose = self.move_group_arm.get_current_pose().pose
+        pose.position.z += pickDist
+        (plan, fraction) = self.move_group_arm.compute_cartesian_path([pose], 0.05, 0, avoid_collisions=True)
+        if event.is_set():
+            return
+        self.move_group_arm.execute(plan, wait=True)
+        
     def preleve(self):
         if self.prelevement_1_2_3 == 0:
-            # if movement initiated
-            if self.inPreleve:
-                current_joints = self.move_group_arm.get_current_joint_values()
-                self.move_group_arm.go(current_joints, wait=False)
-                print("abort preleve movement")
-            self.inPreleve = False
             return
-        # movement init
-        if self.inPreleve == False:
+        
+        event = Event()
+        pickPose = self.echPose[self.prelevement_1_2_3 - 1]
+        moveTask = Thread(target=self.pickDropMove, args=(pickPose, 0.05, True, event))
+        
+        moveTask.start()
+        while self.prelevement_1_2_3 != 0 and moveTask.is_alive():
+            self.joystickUpdate()
+            sleep(self.sleepTime)
+            
+        if moveTask.is_alive():
+            print("aborted")
+            event.set()  
             self.move_group_arm.stop()
-            pose = self.poseEch[self.prelevement_1_2_3-1]
-            # verin go top
-            self.move_group_hand.go([0], wait=True)
-            result = self.move_group_arm.go(pose[:-1], wait=False)
-            self.inPreleve = True
+            self.move_group_hand.stop()
+            current_joints = self.move_group_arm.get_current_joint_values()
+            current_joints[1] = 0
+            self.move_group_arm.go(current_joints, wait=True)
         else:
-            print("innnn")
+            print("finished")
+            # sudo apt install sox
+            duration = 1
+            freq = 440
+            os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
+            sleep(1)
+    
+    def stock(self):
+        if self.macro_stockage_1_2_3 == 0:
+            return
+        
+        event = Event()
+        dropPose = self.stockPose[self.macro_stockage_1_2_3 - 1]
+        moveTask = Thread(target=self.pickDropMove, args=(dropPose, 0.05, False, event))
+        
+        moveTask.start()
+        while self.macro_stockage_1_2_3 != 0 and moveTask.is_alive():
+            self.joystickUpdate()
+            sleep(self.sleepTime)
+            
+        if moveTask.is_alive():
+            print("aborted")
+            event.set()  
+            self.move_group_arm.stop()
+            self.move_group_hand.stop()
+            current_joints = self.move_group_arm.get_current_joint_values()
+            current_joints[1] = 0
+            self.move_group_arm.go(current_joints, wait=True)
+        else:
+            print("finished")
+            # sudo apt install sox
+            duration = 1
+            freq = 440
+            os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
+            sleep(1)
             
     
-    # joystick control loop
+    # movement control loop
     def run(self):
         try:
             while True:
@@ -129,8 +216,7 @@ class Joystick_MoveGroupe (Joystick):
                 pose = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
                 self.armMove(pose)
                 self.preleve()
-                # TODO saisie pre 1_2_3
-                # TODO stockage 1_2_3
+                self.stock()
                 # TODO pub lum cam modePre
                 sleep(self.sleepTime)
         except KeyboardInterrupt:

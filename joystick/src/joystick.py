@@ -7,9 +7,17 @@ class Joystick():
         self.sleepTime = sleepTime
         
         pygame.joystick.init()
-        self.thustmaster = pygame.joystick.Joystick(0)
-
+        
+        try:
+            self.thustmaster = pygame.joystick.Joystick(0)
+        except:
+            print("no joystick avalable")
+            
         pygame.init()
+        window = pygame.display.set_mode((300, 300))
+        rect = pygame.Rect(0, 0, 20, 20)
+        rect.center = window.get_rect().center
+        
         self.macro_stockage_1_2_3 = 0
         self.macro_repliement = False
         self.macro_position_zero = False
@@ -41,6 +49,31 @@ class Joystick():
     
     def joystickUpdate(self):
         for event in pygame.event.get():
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_KP1:
+                    self.prelevement_1_2_3 = 1
+                if event.key == pygame.K_KP2:
+                    self.prelevement_1_2_3 = 2
+                if event.key == pygame.K_KP3:
+                    self.prelevement_1_2_3 = 3
+                
+                if event.key == pygame.K_KP4:
+                    self.macro_stockage_1_2_3 = 1
+                if event.key == pygame.K_KP5:
+                    self.macro_stockage_1_2_3 = 2
+                if event.key == pygame.K_KP6:
+                    self.macro_stockage_1_2_3 = 3
+                    
+            if event.type == pygame.KEYUP:
+                if event.key in (pygame.K_KP1,pygame.K_KP2,pygame.K_KP3):
+                    self.prelevement_1_2_3 = 0
+                
+                if event.key in (pygame.K_KP4,pygame.K_KP5,pygame.K_KP6):
+                    self.macro_stockage_1_2_3 = 0
+                    
+            if event.type == pygame.QUIT:
+                exit()
 
             if event.type == pygame.JOYBUTTONUP:
 
@@ -210,5 +243,7 @@ class Joystick():
 
 if __name__ == '__main__':
     joystick = Joystick()
-    joystick.joystickUpdate()
+    while True:
+        joystick.joystickUpdate()
+        sleep(0.1)
 
