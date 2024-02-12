@@ -16,7 +16,7 @@ class Joystick_MoveGroupe (Joystick):
     def __init__(self,
                  scale_pos=1.0,
                  scale_rotation=1.0) -> None:
-        super().__init__(sleepTime=0.1)
+        super().__init__(sleepTime=0.1,keyboard=False)
 
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node("move_group_python_interface_tutorial", anonymous=True)
@@ -38,7 +38,7 @@ class Joystick_MoveGroupe (Joystick):
                         [2.91,0,-1.89,-0.99,0]]
         self.stockPose = [[3.69,0,-1.72,-1.73,0],
                           [3.30,0,-1.68,-1.37,0],
-                          [2.87,0,-1.41,-0.46,0]]
+                          [2.87,0,-1.41,-1.20,0]]
 
     def armMove (self,pose):
         if pose == [0,0,0]:
@@ -182,7 +182,7 @@ class Joystick_MoveGroupe (Joystick):
         
         event = Event()
         dropPose = self.stockPose[self.macro_stockage_1_2_3 - 1]
-        moveTask = Thread(target=self.pickDropMove, args=(dropPose, 0.05, False, event))
+        moveTask = Thread(target=self.pickDropMove, args=(dropPose, 0.1, False, event))
         
         moveTask.start()
         while self.macro_stockage_1_2_3 != 0 and moveTask.is_alive():
@@ -205,7 +205,6 @@ class Joystick_MoveGroupe (Joystick):
             os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
             sleep(1)
             
-    
     # movement control loop
     def run(self):
         try:

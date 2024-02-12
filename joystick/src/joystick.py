@@ -2,9 +2,10 @@ import pygame
 from time import sleep
 
 class Joystick():
-    def __init__(self,sleepTime=0.04) -> None:
+    def __init__(self,sleepTime=0.04,keyboard=False) -> None:
         
         self.sleepTime = sleepTime
+        self.keboard = keyboard
         
         pygame.joystick.init()
         
@@ -14,9 +15,11 @@ class Joystick():
             print("no joystick avalable")
             
         pygame.init()
-        window = pygame.display.set_mode((300, 300))
-        rect = pygame.Rect(0, 0, 20, 20)
-        rect.center = window.get_rect().center
+        
+        if self.keboard:
+            window = pygame.display.set_mode((300, 300))
+            rect = pygame.Rect(0, 0, 20, 20)
+            rect.center = window.get_rect().center
         
         self.macro_stockage_1_2_3 = 0
         self.macro_repliement = False
@@ -50,7 +53,7 @@ class Joystick():
     def joystickUpdate(self):
         for event in pygame.event.get():
             
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN and self.keyboard:
                 if event.key == pygame.K_KP1:
                     self.prelevement_1_2_3 = 1
                 if event.key == pygame.K_KP2:
@@ -65,7 +68,7 @@ class Joystick():
                 if event.key == pygame.K_KP6:
                     self.macro_stockage_1_2_3 = 3
                     
-            if event.type == pygame.KEYUP:
+            if event.type == pygame.KEYUP and self.keyboard:
                 if event.key in (pygame.K_KP1,pygame.K_KP2,pygame.K_KP3):
                     self.prelevement_1_2_3 = 0
                 
