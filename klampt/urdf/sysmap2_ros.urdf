@@ -113,7 +113,7 @@
         <visual>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/7_3_scara_interne_V2_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/7_3_scara_interne_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
@@ -177,6 +177,7 @@
             </geometry>
         </visual>
         <collision>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_base_convexHull.stl"/>
             </geometry>
@@ -191,6 +192,7 @@
             </geometry>
         </visual>
         <collision>
+            <origin rpy="1.57 -2.094 0.0" />
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
             </geometry>
@@ -205,6 +207,7 @@
             </geometry>
         </visual>
         <collision>
+            <origin rpy="1.57 -2.094 0.0" />
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
             </geometry>
@@ -219,6 +222,7 @@
             </geometry>
         </visual>
         <collision>
+            <origin rpy="1.57 -2.094 0.0" />
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
             </geometry>
@@ -274,7 +278,7 @@
         <parent link="colonne"/>
         <child link="interne"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-0.309" upper="0" effort="0.0" velocity="0.0"/>
+        <limit lower="-0.2995" upper="0" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="interne_externe" type="revolute">
@@ -332,4 +336,6 @@
         <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0"/>
         <mimic joint="pince_doigt1" multiplier="1" offset="0"/>
     </joint>
+
+    <!-- <klampt package_root="../../" flip_yz="0" use_vis_geom="1"  freeze_root_link="0" > -->
 </robot>

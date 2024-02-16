@@ -104,7 +104,7 @@ class Joystick_MoveGroupe (Joystick):
         # verin go top
         if event.is_set():
             return
-        self.move_group_hand.go([0], wait=True)
+        self.move_group_hand.go([0,0], wait=True)
         
         # # colone go top
         # current_joints = self.move_group_arm.get_current_joint_values()

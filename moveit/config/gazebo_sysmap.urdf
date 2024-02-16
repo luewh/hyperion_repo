@@ -50,7 +50,7 @@
         <collision>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockageV6_convexHull.stl" />
+                <mesh filename="package://klampt/meshes/3_ZoneStockageV6_only_optimized.stl" />
             </geometry>
         </collision>
         <inertial>
@@ -69,7 +69,7 @@
         <collision>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/5_ZoneElec_convexHull.stl" />
+                <mesh filename="package://klampt/meshes/5_ZoneElec_only_convexHull.stl" />
             </geometry>
         </collision>
         <inertial>
@@ -173,17 +173,17 @@
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
         </inertial>
     </link>
-    <link name="poigner">
+    <link name="poignet">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/7_5_scara_poigner_optimized.stl" />
+                <mesh filename="package://klampt/meshes/7_5_scara_poignet_optimized.stl" />
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/7_5_scara_poigner_convexHull.stl" />
+                <mesh filename="package://klampt/meshes/7_5_scara_poignet_convexHull.stl" />
             </geometry>
         </collision>
         <inertial>
@@ -211,17 +211,70 @@
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
         </inertial>
     </link>
-    <link name="pince">
+    <link name="pince_base">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/7_7_scara_pince_ferme_optimized.stl" />
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_base_optimized.stl" />
             </geometry>
         </visual>
         <collision>
-            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/7_7_scara_pince_ferme_convexHull.stl" />
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_base_convexHull.stl" />
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
+        </inertial>
+    </link>
+    <link name="doigt1">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_optimized.stl" />
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl" />
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
+        </inertial>
+    </link>
+    <link name="doigt2">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_optimized.stl" />
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl" />
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
+        </inertial>
+    </link>
+    <link name="doigt3">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_optimized.stl" />
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl" />
             </geometry>
         </collision>
         <inertial>
@@ -281,16 +334,16 @@
         <axis xyz="0.0 0.0 1.0" />
         <limit lower="-2.1" upper="2.56" effort="0.0" velocity="0.0" />
     </joint>
-    <joint name="externe_poigner" type="revolute">
+    <joint name="externe_poignet" type="revolute">
         <origin xyz="0.29117 0.13275 0.030" rpy="0.0 0.0 0.0" />
         <parent link="externe" />
-        <child link="poigner" />
+        <child link="poignet" />
         <axis xyz="0.0 0.0 1.0" />
-        <limit lower="-3" upper="3" effort="0.0" velocity="0.0" />
+        <limit lower="-6" upper="6" effort="0.0" velocity="0.0" />
     </joint>
-    <joint name="poigner_verin" type="prismatic">
+    <joint name="poignet_verin" type="prismatic">
         <origin xyz="0.0 0.0 -0.083" rpy="0.0 0.0 0.0" />
-        <parent link="poigner" />
+        <parent link="poignet" />
         <child link="verin" />
         <axis xyz="0.0 0.0 1.0" />
         <limit lower="-0.15" upper="0.0" effort="0.0" velocity="0.0" />
@@ -298,7 +351,30 @@
     <joint name="verin_pince" type="fixed">
         <origin xyz="0.0 0.0 -0.025" rpy="-1.57 0.0 0.0" />
         <parent link="verin" />
-        <child link="pince" />
+        <child link="pince_base" />
+    </joint>
+    <joint name="pince_doigt1" type="revolute">
+        <origin xyz="0.02405 0.07176 0.05466" rpy="0.0 2.094 0.0" />
+        <parent link="pince_base" />
+        <child link="doigt1" />
+        <axis xyz="0.0 0.0 1.0" />
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0" />
+    </joint>
+    <joint name="pince_doigt2" type="revolute">
+        <origin xyz="-0.05936 0.07176 -0.0065" rpy="0.0 0.0 0.0" />
+        <parent link="pince_base" />
+        <child link="doigt2" />
+        <axis xyz="0.0 0.0 1.0" />
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0" />
+        <mimic joint="pince_doigt1" multiplier="1" offset="0" />
+    </joint>
+    <joint name="pince_doigt3" type="revolute">
+        <origin xyz="0.03531 0.07176 -0.04816" rpy="0.0 -2.094 0.0" />
+        <parent link="pince_base" />
+        <child link="doigt3" />
+        <axis xyz="0.0 0.0 1.0" />
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0" />
+        <mimic joint="pince_doigt1" multiplier="1" offset="0" />
     </joint>
     <transmission name="trans_base_colonne">
         <type>transmission_interface/SimpleTransmission</type>
@@ -330,22 +406,52 @@
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_externe_poigner">
+    <transmission name="trans_externe_poignet">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="externe_poigner">
+        <joint name="externe_poignet">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="externe_poigner_motor">
+        <actuator name="externe_poignet_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_poigner_verin">
+    <transmission name="trans_poignet_verin">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="poigner_verin">
+        <joint name="poignet_verin">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="poigner_verin_motor">
+        <actuator name="poignet_verin_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_pince_doigt1">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="pince_doigt1">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="pince_doigt1_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_pince_doigt2">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="pince_doigt2">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="pince_doigt2_motor">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="trans_pince_doigt3">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="pince_doigt3">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="pince_doigt3_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>

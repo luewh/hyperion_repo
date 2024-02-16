@@ -13,21 +13,25 @@
         <joint name="base_colonne"/>
         <joint name="colonne_interne"/>
         <joint name="interne_externe"/>
-        <joint name="externe_poigner"/>
+        <joint name="externe_poignet"/>
     </group>
     <group name="scara_hand">
-        <joint name="poigner_verin"/>
+        <joint name="poignet_verin"/>
         <joint name="verin_pince"/>
+        <joint name="pince_doigt1"/>
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="scara_arm">
-        <joint name="base_colonne" value="0"/>
+        <joint name="base_colonne" value="-2.2623"/>
         <joint name="colonne_interne" value="0"/>
-        <joint name="externe_poigner" value="0"/>
-        <joint name="interne_externe" value="-2.1"/>
+        <joint name="externe_poignet" value="-1.8689"/>
+        <joint name="interne_externe" value="-1.8199"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="scara_hand" parent_link="externe" group="scara_hand"/>
+    <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
+    <passive_joint name="pince_doigt2"/>
+    <passive_joint name="pince_doigt3"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="aileron" link2="base" reason="Never"/>
     <disable_collisions link1="aileron" link2="batterie" reason="Never"/>
@@ -40,34 +44,54 @@
     <disable_collisions link1="base" link2="colonne" reason="Adjacent"/>
     <disable_collisions link1="base" link2="electrique" reason="Never"/>
     <disable_collisions link1="base" link2="platine" reason="Adjacent"/>
-    <disable_collisions link1="base" link2="poigner" reason="Never"/>
+    <disable_collisions link1="base" link2="poignet" reason="Never"/>
     <disable_collisions link1="base" link2="stockage" reason="Never"/>
     <disable_collisions link1="batterie" link2="colonne" reason="Never"/>
     <disable_collisions link1="batterie" link2="electrique" reason="Never"/>
     <disable_collisions link1="batterie" link2="platine" reason="Adjacent"/>
     <disable_collisions link1="batterie" link2="stockage" reason="Never"/>
+    <disable_collisions link1="colonne" link2="doigt1" reason="Never"/>
+    <disable_collisions link1="colonne" link2="doigt2" reason="Never"/>
+    <disable_collisions link1="colonne" link2="doigt3" reason="Never"/>
     <disable_collisions link1="colonne" link2="electrique" reason="Never"/>
     <disable_collisions link1="colonne" link2="externe" reason="Never"/>
     <disable_collisions link1="colonne" link2="interne" reason="Adjacent"/>
-    <disable_collisions link1="colonne" link2="pince" reason="Never"/>
     <disable_collisions link1="colonne" link2="platine" reason="Never"/>
-    <disable_collisions link1="colonne" link2="poigner" reason="Never"/>
+    <disable_collisions link1="colonne" link2="poignet" reason="Never"/>
     <disable_collisions link1="colonne" link2="stockage" reason="Never"/>
     <disable_collisions link1="colonne" link2="verin" reason="Never"/>
+    <disable_collisions link1="doigt1" link2="doigt2" reason="Never"/>
+    <disable_collisions link1="doigt1" link2="doigt3" reason="Never"/>
+    <disable_collisions link1="doigt1" link2="externe" reason="Never"/>
+    <disable_collisions link1="doigt1" link2="interne" reason="Never"/>
+    <disable_collisions link1="doigt1" link2="pince_base" reason="Adjacent"/>
+    <disable_collisions link1="doigt1" link2="poignet" reason="Never"/>
+    <disable_collisions link1="doigt1" link2="verin" reason="Never"/>
+    <disable_collisions link1="doigt2" link2="doigt3" reason="Never"/>
+    <disable_collisions link1="doigt2" link2="externe" reason="Never"/>
+    <disable_collisions link1="doigt2" link2="interne" reason="Never"/>
+    <disable_collisions link1="doigt2" link2="pince_base" reason="Adjacent"/>
+    <disable_collisions link1="doigt2" link2="poignet" reason="Never"/>
+    <disable_collisions link1="doigt2" link2="verin" reason="Never"/>
+    <disable_collisions link1="doigt3" link2="externe" reason="Never"/>
+    <disable_collisions link1="doigt3" link2="interne" reason="Never"/>
+    <disable_collisions link1="doigt3" link2="pince_base" reason="Adjacent"/>
+    <disable_collisions link1="doigt3" link2="poignet" reason="Never"/>
+    <disable_collisions link1="doigt3" link2="verin" reason="Never"/>
     <disable_collisions link1="electrique" link2="platine" reason="Adjacent"/>
-    <disable_collisions link1="electrique" link2="stockage" reason="Default"/>
+    <disable_collisions link1="electrique" link2="stockage" reason="Never"/>
     <disable_collisions link1="externe" link2="interne" reason="Adjacent"/>
-    <disable_collisions link1="externe" link2="pince" reason="Never"/>
+    <disable_collisions link1="externe" link2="pince_base" reason="Default"/>
     <disable_collisions link1="externe" link2="platine" reason="Never"/>
-    <disable_collisions link1="externe" link2="poigner" reason="Adjacent"/>
+    <disable_collisions link1="externe" link2="poignet" reason="Adjacent"/>
     <disable_collisions link1="externe" link2="verin" reason="Default"/>
-    <disable_collisions link1="interne" link2="pince" reason="Never"/>
+    <disable_collisions link1="interne" link2="pince_base" reason="Never"/>
     <disable_collisions link1="interne" link2="platine" reason="Never"/>
-    <disable_collisions link1="interne" link2="poigner" reason="Never"/>
+    <disable_collisions link1="interne" link2="poignet" reason="Never"/>
     <disable_collisions link1="interne" link2="verin" reason="Never"/>
-    <disable_collisions link1="pince" link2="poigner" reason="Never"/>
-    <disable_collisions link1="pince" link2="verin" reason="Adjacent"/>
-    <disable_collisions link1="platine" link2="poigner" reason="Never"/>
+    <disable_collisions link1="pince_base" link2="poignet" reason="Default"/>
+    <disable_collisions link1="pince_base" link2="verin" reason="Adjacent"/>
+    <disable_collisions link1="platine" link2="poignet" reason="Never"/>
     <disable_collisions link1="platine" link2="stockage" reason="Adjacent"/>
-    <disable_collisions link1="poigner" link2="verin" reason="Adjacent"/>
+    <disable_collisions link1="poignet" link2="verin" reason="Adjacent"/>
 </robot>

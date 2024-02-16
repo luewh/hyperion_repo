@@ -18,7 +18,7 @@ joint_limits:
     max_velocity: 0
     has_acceleration_limits: false
     max_acceleration: 0
-  externe_poigner:
+  externe_poignet:
     has_velocity_limits: false
     max_velocity: 0
     has_acceleration_limits: false
@@ -28,7 +28,12 @@ joint_limits:
     max_velocity: 0
     has_acceleration_limits: false
     max_acceleration: 0
-  poigner_verin:
+  pince_doigt1:
+    has_velocity_limits: false
+    max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
+  poignet_verin:
     has_velocity_limits: false
     max_velocity: 0
     has_acceleration_limits: false

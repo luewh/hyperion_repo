@@ -5,11 +5,12 @@ controller_list:
       - base_colonne
       - colonne_interne
       - interne_externe
-      - externe_poigner
+      - externe_poignet
   - name: fake_scara_hand_controller
     type: $(arg fake_execution_type)
     joints:
-      - poigner_verin
+      - poignet_verin
+      - pince_doigt1
 initial:  # Define initial robot poses per group
   - group: scara_arm
     pose: home

@@ -7,7 +7,7 @@ Panels:
         - /MotionPlanning1
         - /MotionPlanning1/Scene Robot1
       Splitter Ratio: 0.5
-    Tree Height: 352
+    Tree Height: 441
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -91,6 +91,21 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          doigt1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          doigt2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          doigt3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           electrique:
             Alpha: 1
             Show Axes: false
@@ -106,7 +121,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          pince:
+          pince_base:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -116,7 +131,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          poigner:
+          poignet:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -201,6 +216,21 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          doigt1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          doigt2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          doigt3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           electrique:
             Alpha: 1
             Show Axes: false
@@ -216,7 +246,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          pince:
+          pince_base:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -226,7 +256,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          poigner:
+          poignet:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -266,7 +296,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.3117220401763916
+      Distance: 1.4535053968429565
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -274,33 +304,33 @@ Visualization Manager:
         Value: false
       Field of View: 0.75
       Focal Point:
-        X: -0.33284157514572144
-        Y: 0.07788310945034027
-        Z: 0.20103314518928528
+        X: -0.09850948303937912
+        Y: 0.250178724527359
+        Z: 0.12709328532218933
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4397980272769928
+      Pitch: 0.3797978162765503
       Target Frame: world
-      Yaw: 4.699972152709961
+      Yaw: 4.718146324157715
     Saved: ~
 Window Geometry:
   Displays:
-    collapsed: false
-  Height: 890
+    collapsed: true
+  Height: 504
   Help:
     collapsed: false
-  Hide Left Dock: false
+  Hide Left Dock: true
   Hide Right Dock: false
   MotionPlanning:
-    collapsed: false
+    collapsed: true
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001f300000320fc0200000007fb000000100044006900730070006c006100790073010000003d0000019d000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a00560069006500770073000000010c000000a4000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000001e00000017d0000017d00ffffff0000053f0000032000000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000001f30000024cfc0200000007fb000000100044006900730070006c006100790073000000003d000000c9000000c900fffffffb0000000800480065006c00700000000342000000bb0000006e00fffffffb0000000a00560069006500770073000000010c000000a4000000a400fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000010c0000017d0000017d00ffffff000002b20000019e00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1848
+  Width: 690
   X: 72
-  Y: 27
+  Y: 413
