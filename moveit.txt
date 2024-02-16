@@ -1,0 +1,50 @@
+main page
+https://ros-planning.github.io/moveit_tutorials/
+
+
+
+installation ou sudo apt install ros-noetic-moveit
+https://ros-planning.github.io/moveit_tutorials/doc/getting_started/getting_started.html
+
+wstool init .
+wstool merge -t . https://raw.githubusercontent.com/ros-planning/moveit/master/moveit.rosinstall
+wstool remove moveit_tutorials
+wstool update -t .
+
+cd ~/catkin_ws/src
+git clone https://github.com/ros-planning/moveit_tutorials.git -b master
+git clone https://github.com/ros-planning/panda_moveit_config.git -b noetic-devel
+
+cd ~/catkin_ws/src
+rosdep install -y --from-paths . --ignore-src --rosdistro noetic
+
+sudo sh -c 'echo "deb http://packages.ros.org/ros-testing/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt update
+
+
+
+example
+https://ros-planning.github.io/moveit_tutorials/doc/quickstart_in_rviz/quickstart_in_rviz_tutorial.html
+
+roslaunch panda_moveit_config demo.launch rviz_tutorial:=true
+
+
+
+https://ros-planning.github.io/moveit_tutorials/doc/setup_assistant/setup_assistant_tutorial.html
+
+roslaunch moveit_setup_assistant setup_assistant.launch
+roslaunch moveit_test demo.launch
+roslaunch moveit_test2 demo.launch
+roslaunch moveit_test_sysmap_collision demo.launch
+
+
+move_groupe python API
+https://ros-planning.github.io/moveit_tutorials/doc/move_group_python_interface/move_group_python_interface_tutorial.html
+
+
+moveit c++
+https://ros-planning.github.io/moveit_tutorials/doc/robot_model_and_robot_state/robot_model_and_robot_state_tutorial.html
+
+
+
+
