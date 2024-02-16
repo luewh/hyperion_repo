@@ -20,7 +20,7 @@ for path in paths:
 
     ms.load_new_mesh(path)
 
-    ms.convex_hull()
+    ms.generate_convex_hull()
     
 
     fileName = path.split('\\')[-1]

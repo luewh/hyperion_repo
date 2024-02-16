@@ -1,102 +1,228 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- V2 : casque hyperion enlevé -->
 <robot name="sysmap">
 
     <link name="world"/>
-
+    
     <link name="platine">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\1_Platine_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/1_Platine_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/1_Platine_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <link name="aileron">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\2_SupportAileron_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/2_SupportAileron_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/2_SupportAileron_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <link name="stockage">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\3_ZoneStockageV6_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/3_ZoneStockageV6_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockageV6_only_optimized.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <link name="electrique">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\5_ZoneElec_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/5_ZoneElec_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/5_ZoneElec_only_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <link name="batterie">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\6_ZoneBatterie.stl"/>
+                <mesh filename="package://klampt/meshes/6_ZoneBatterie.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/6_ZoneBatterie_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <link name="base">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\7_1_scara_base_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/7_1_scara_base_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_1_scara_base_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <link name="colonne">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\7_2_scara_colonne_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/7_2_scara_colonne_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_2_scara_colonne_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <link name="interne">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\7_3_scara_interne_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/7_3_scara_interne_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_3_scara_interne_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <link name="externe">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\7_4_scara_externe_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/7_4_scara_externe_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_4_scara_externe_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
-    <link name="poigner">
+    <link name="poignet">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\7_5_scara_poigner_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/7_5_scara_poignet_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_5_scara_poignet_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <link name="verin">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\7_6_scara_verin_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/7_6_scara_verin_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_6_scara_verin_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
-    <link name="pince">
+    <link name="pince_base">
         <visual>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="..\meshes\7_7_scara_pince_ferme_optimized.stl" />
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_base_optimized.stl"/>
             </geometry>
         </visual>
+        <collision>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_base_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="doigt1">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="doigt2">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="doigt3">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
+            </geometry>
+        </collision>
     </link>
 
     <joint name="world_platine" type="fixed">
@@ -140,7 +266,7 @@
         <parent link="base"/>
         <child link="colonne"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-3" upper="3" effort="0.0" velocity="0.0"/>
+        <limit lower="-6" upper="6" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="colonne_interne" type="prismatic">
@@ -148,7 +274,7 @@
         <parent link="colonne"/>
         <child link="interne"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-0.309" upper="0" effort="0.0" velocity="0.0"/>
+        <limit lower="-0.2995" upper="0" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="interne_externe" type="revolute">
@@ -156,20 +282,20 @@
         <parent link="interne"/>
         <child link="externe"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-1.64" upper="2.08" effort="0.0" velocity="0.0"/>
+        <limit lower="-2.1" upper="2.56" effort="0.0" velocity="0.0"/>
     </joint>
 
-    <joint name="externe_poigner" type="revolute">
+    <joint name="externe_poignet" type="revolute">
         <origin xyz="0.29117 0.13275 0.030" rpy="0.0 0.0 0.0"/>
         <parent link="externe"/>
-        <child link="poigner"/>
+        <child link="poignet"/>
         <axis xyz="0.0 0.0 1.0"/>
         <limit lower="-3" upper="3" effort="0.0" velocity="0.0"/>
     </joint>
 
-    <joint name="poigner_verin" type="prismatic">
+    <joint name="poignet_verin" type="prismatic">
         <origin xyz="0.0 0.0 -0.083" rpy="0.0 0.0 0.0"/>
-        <parent link="poigner"/>
+        <parent link="poignet"/>
         <child link="verin"/>
         <axis xyz="0.0 0.0 1.0"/>
         <limit lower="-0.15" upper="0.0" effort="0.0" velocity="0.0"/>
@@ -178,8 +304,34 @@
     <joint name="verin_pince" type="fixed">
         <origin xyz="0.0 0.0 -0.025" rpy="-1.57 0.0 0.0"/>
         <parent link="verin"/>
-        <child link="pince"/>
+        <child link="pince_base"/>
     </joint>
 
-    <klampt package_root="./" flip_yz="1" use_vis_geom="1"  freeze_root_link="0" >
+    <joint name="pince_doigt1" type="revolute">
+        <origin xyz="0.02405 0.07176 0.05466" rpy="0.0 2.094 0.0"/>
+        <parent link="pince_base"/>
+        <child link="doigt1"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="pince_doigt2" type="revolute">
+        <origin xyz="-0.05936 0.07176 -0.0065" rpy="0.0 0.0 0.0"/>
+        <parent link="pince_base"/>
+        <child link="doigt2"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0"/>
+        <mimic joint="pince_doigt1" multiplier="1" offset="0"/>
+    </joint>
+
+    <joint name="pince_doigt3" type="revolute">
+        <origin xyz="0.03531 0.07176 -0.04816" rpy="0.0 -2.094 0.0"/>
+        <parent link="pince_base"/>
+        <child link="doigt3"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0"/>
+        <mimic joint="pince_doigt1" multiplier="1" offset="0"/>
+    </joint>
+
+    <klampt package_root="../../" flip_yz="0" use_vis_geom="1"  freeze_root_link="0" >
 </robot>

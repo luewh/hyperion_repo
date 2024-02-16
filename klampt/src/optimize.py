@@ -27,7 +27,7 @@ for path in paths:
     ms.meshing_remove_unreferenced_vertices()
     
     ms.meshing_merge_close_vertices(
-        threshold=pymeshlab.pmeshlab.Percentage(pourcentage))
+        threshold=pymeshlab.pmeshlab.PercentageValue(pourcentage))
     
     ms.meshing_remove_duplicate_faces()
     ms.meshing_remove_null_faces()
@@ -53,7 +53,7 @@ for path in paths:
     ms.meshing_remove_unreferenced_vertices()
 
     ms.meshing_merge_close_vertices(
-        threshold=pymeshlab.pmeshlab.Percentage(pourcentage))
+        threshold=pymeshlab.pmeshlab.PercentageValue(pourcentage))
     
     ms.meshing_remove_duplicate_faces()
     ms.meshing_remove_null_faces()

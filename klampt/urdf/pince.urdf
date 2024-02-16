@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="pince">
+
+    <link name="world"/>
+
+    <joint name="world_base" type="fixed">
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="world"/>
+        <child link="base"/>
+    </joint>
+
+    <link name="base">
+        <visual>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_base_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_base_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="doigt1">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 -2.094 0.0"/>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_doigt_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_doigt_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="doigt2">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 -2.094 0.0"/>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_doigt_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_doigt_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="doigt3">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 -2.094 0.0"/>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_doigt_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <mesh filename="..\meshes\7_7_scara_pince_doigt_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="base_doigt1" type="revolute">
+        <origin xyz="0.02405 0.07176 0.05466" rpy="0.0 2.094 0.0"/>
+        <parent link="base"/>
+        <child link="doigt1"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="base_doigt2" type="revolute">
+        <origin xyz="-0.05936 0.07176 -0.0065" rpy="0.0 0.0 0.0"/>
+        <parent link="base"/>
+        <child link="doigt2"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0"/>
+        <mimic joint="base_doigt1"/>
+    </joint>
+
+    <joint name="base_doigt3" type="revolute">
+        <origin xyz="0.03531 0.07176 -0.04816" rpy="0.0 -2.094 0.0"/>
+        <parent link="base"/>
+        <child link="doigt3"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.0"/>
+        <mimic joint="base_doigt1"/>
+    </joint>
+
+    <klampt package_root="./" flip_yz="1" use_vis_geom="1"  freeze_root_link="0" >
+</robot>
