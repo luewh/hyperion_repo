@@ -12,8 +12,11 @@ os.environ['GST_DEBUG'] = "0"
 
 def imPub(camera_path,camera_topic,hz):
     # camera init
-    capture = cv2.VideoCapture()
-    capture.open(camera_path)
+    if camera_topic == "vision_globale":
+        capture = cv2.VideoCapture(0)
+    else:
+        capture = cv2.VideoCapture()
+        capture.open(camera_path)
     if not capture.isOpened():
         print('Pas de camera disponible : "{}"'.format(camera_path))
     else:
