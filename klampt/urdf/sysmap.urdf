@@ -302,7 +302,7 @@
     </joint>
 
     <joint name="verin_pince" type="fixed">
-        <origin xyz="0.0 0.0 -0.025" rpy="-1.57 0.0 0.0"/>
+        <origin xyz="0.0 0.0 -0.025" rpy="-1.57 0.0 0.74"/>
         <parent link="verin"/>
         <child link="pince_base"/>
     </joint>
