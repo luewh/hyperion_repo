@@ -38,3 +38,30 @@ catkin_make
 echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 
+
+---------------
+Clone project :
+---------------
+
+cd ~/catkin_ws/src
+git clone https://github.com/luewh/hyperion_repo.git
+
+cd ~/catkin_ws/
+catkin_make
+source ~/.bashrc
+
+
+----------------------------------
+Installations project dependents :
+----------------------------------
+
+sudo apt install ros-noetic-cv-bridge
+
+sudo apt install ros-noetic-moveit
+
+# sound for joystick
+sudo apt install sox
+
+sudo pip install pygame
+
+
