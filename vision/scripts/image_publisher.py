@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import rospy
+import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-import cv2
 from openCV_utils import *
 
 import os
