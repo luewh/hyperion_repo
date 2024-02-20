@@ -4,7 +4,8 @@ import rospy
 import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-from openCV_utils import *
+# from openCV_utils import *
+from colorama import Fore, Style
 
 import os
 os.environ['OPENCV_LOG_LEVEL'] = "SILENT"
@@ -12,15 +13,13 @@ os.environ['GST_DEBUG'] = "0"
 
 def imPub(camera_path,camera_topic,hz):
     # camera init
-    if camera_topic == "vision_globale":
-        capture = cv2.VideoCapture(0)
-    else:
-        capture = cv2.VideoCapture()
-        capture.open(camera_path)
+    capture = cv2.VideoCapture()
+    capture.open(camera_path)
+    capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M','J','P','G'))
     if not capture.isOpened():
-        print('Pas de camera disponible : "{}"'.format(camera_path))
+        print(Fore.RED + 'Pas de camera disponible : "{}"'.format(camera_path) + Style.RESET_ALL)
     else:
-        print('Camera disponible : "{}"'.format(camera_path))
+        print(Fore.GREEN + 'Camera disponible : "{}"'.format(camera_path) + Style.RESET_ALL)
     
     # publisher init
     bridge = CvBridge()
@@ -39,16 +38,17 @@ def imPub(camera_path,camera_topic,hz):
             # camera re-init
             capture.open(camera_path)
             if not capture.isOpened():
-                print('Pas de camera disponible : "{}"'.format(camera_path))
+                print(Fore.RED + 'Pas de camera disponible : "{}"'.format(camera_path) + Style.RESET_ALL)
                 rospy.Rate(0.5).sleep()
             else:
-                print('Camera disponible : "{}"'.format(camera_path))
+                print(Fore.GREEN + 'Camera disponible : "{}"'.format(camera_path) + Style.RESET_ALL)
             
     capture.release()
 
 
 if __name__ == '__main__':
-    camera_path = "/dev/v4l/by-path/pci-0000:00:06.0-usb-0:2:1.0-video-index0"
+    # integrated camera on vmBox
+    camera_path = "/dev/v4l/by-path/pci-0000:00:06.0-usb-0:3:1.0-video-index0"
     camera_topic = "vision_globale"
     hz = 10
     try:
