@@ -47,11 +47,9 @@ class Joystick():
 
         # TODO pub init
     
-    def boucle_while(self):
-        pass
-    
     def joystickUpdate(self):
         for event in pygame.event.get():
+            button_even = ""
             
             if event.type == pygame.KEYDOWN and self.keyboard:
                 if event.key == pygame.K_KP1:
@@ -93,31 +91,36 @@ class Joystick():
                 # macro stockage reset
                 if event.dict["button"] in [4,5,6]:
                     self.macro_stockage_1_2_3 = 0
-                    print("Macro stockage : {}".format(self.macro_stockage_1_2_3))
+                    button_even = "Macro stockage : {}".format(self.macro_stockage_1_2_3)
+                    # print(button_even)
                     # TODO pub self.macro_stockage_1_2_3
                 
                 # macro repliement press reset
                 if event.dict["button"] == 7:
                     self.macro_repliement = False
-                    print("Macro repliement : {}".format(self.macro_repliement))
+                    button_even = "Macro repliement : {}".format(self.macro_repliement)
+                    # print(button_even)
                     # TODO pub self.macro_repliement
                 
                 # macro position zero press reset
                 if event.dict["button"] == 8:
                     self.macro_position_zero = False
-                    print("Macro position zero : {}".format(self.macro_position_zero))
+                    button_even = "Macro position zero : {}".format(self.macro_position_zero)
+                    # print(button_even)
                     # TODO pub self.macro_position_zero
 
                 # macro frotti poussière press reset
                 if event.dict["button"] == 9:
                     self.macro_frotti_poussière = False
-                    print("Macro frotti/poussière : {}".format(self.macro_frotti_poussière))
+                    button_even = "Macro frotti/poussière : {}".format(self.macro_frotti_poussière)
+                    # print(button_even)
                     # TODO pub self.macro_frotti_poussière
 
                 # prélèvement press reset
                 if event.dict["button"] in [10,11,12]:
                     self.prelevement_1_2_3 = 0
-                    print("Prélèvement : {}".format(self.prelevement_1_2_3))
+                    button_even = "Prélèvement : {}".format(self.prelevement_1_2_3)
+                    # print(button_even)
                     # TODO pub self.prelevement_1_2_3
 
             if event.type == pygame.JOYBUTTONDOWN:
@@ -150,25 +153,29 @@ class Joystick():
                         self.macro_stockage_1_2_3 = 2
                     else:
                         self.macro_stockage_1_2_3 = 3
-                    print("Macro stockage : {}".format(self.macro_stockage_1_2_3))
+                    button_even = "Macro stockage : {}".format(self.macro_stockage_1_2_3)
+                    # print(button_even)
                     # TODO pub self.macro_stockage_1_2_3
 
                 # macro repliement press
                 if event.dict["button"] == 7:
                     self.macro_repliement = True
-                    print("Macro repliement : {}".format(self.macro_repliement))
+                    button_even = "Macro repliement : {}".format(self.macro_repliement)
+                    # print(button_even)
                     # TODO pub self.macro_repliement
 
                 # macro position zero press
                 if event.dict["button"] == 8:
                     self.macro_position_zero = True
-                    print("Macro position zero : {}".format(self.macro_position_zero))
+                    button_even = "Macro position zero : {}".format(self.macro_position_zero)
+                    # print(button_even)
                     # TODO pub self.macro_position_zero
 
                 # macro frotti poussière press
                 if event.dict["button"] == 9:
                     self.macro_frotti_poussière = True
-                    print("Macro frotti/poussière : {}".format(self.macro_frotti_poussière))
+                    button_even = "Macro frotti/poussière : {}".format(self.macro_frotti_poussière)
+                    # print(button_even)
                     # TODO pub self.macro_frotti_poussière
 
                 # macro stockage press
@@ -179,7 +186,8 @@ class Joystick():
                         self.prelevement_1_2_3 = 2
                     else:
                         self.prelevement_1_2_3 = 3
-                    print("Prélèvement : {}".format(self.prelevement_1_2_3))
+                    button_even = "Prélèvement : {}".format(self.prelevement_1_2_3)
+                    # print(button_even)
                     # TODO pub self.prelevement_1_2_3
 
                 # mode prélèvement switch
@@ -187,20 +195,22 @@ class Joystick():
                     self.modification_mode_index += 1
                     if self.modification_mode_index >= 4:
                         self.modification_mode_index = 0
-                    print("Mode prélèvement : {}".format(
-                        self.modification_mode_list[self.modification_mode_index]))
+                    button_even = "Mode prélèvement : {}".format(self.modification_mode_list[self.modification_mode_index])
+                    # print(button_even)
                     # TODO pub modification_mode
 
                 # camera switch
                 if event.dict["button"] == 14:
                     self.on_off_camera = not(self.on_off_camera)
-                    print("Camera : {}".format(self.on_off_camera))
+                    button_even = "Camera : {}".format(self.on_off_camera)
+                    # print(button_even)
                     # TODO pub self.on_off_camera
 
                 # lumière switch
                 if event.dict["button"] == 15:
                     self.on_off_lumiere = not(self.on_off_lumiere)
-                    print("Lumière : {}".format(self.on_off_lumiere))
+                    button_even = "Lumière : {}".format(self.on_off_lumiere)
+                    # print(button_even)
                     # TODO pub self.on_off_lumiere
 
             # if event.type == pygame.JOYHATMOTION:
@@ -233,14 +243,16 @@ class Joystick():
                     if self.degre_ouverture_pince != round((self.thustmaster.get_axis(3)+1)/2,self.effecteur_x_y_and_pince_sensibilite):
                         self.degre_ouverture_pince = round((self.thustmaster.get_axis(3)+1)/2,self.effecteur_x_y_and_pince_sensibilite)
                         # TODO pub self.degre_ouverture_pince
-
-            print("X : {} Y : {} Z : {} R : {} PINCE : {} BASE : {}"
-                  .format(str(self.effecteur_x_vitesse).ljust(4),
-                          str(self.effecteur_y_vitesse).ljust(4),
-                          str(self.effecteur_z_vitesse).ljust(4),
-                          str(self.rotation_pince_vitesse).ljust(4),
-                          str(self.degre_ouverture_pince).ljust(4),
-                          str(self.rotation_base_vitesse).ljust(4)), end="\r")
+            
+            print(" "*100, end="\r")
+            print("X : {} Y : {} Z : {} R : {} PINCE : {} BASE : {} BUTTON : {}"
+                  .format(str(self.effecteur_x_vitesse).ljust(5),
+                          str(self.effecteur_y_vitesse).ljust(5),
+                          str(self.effecteur_z_vitesse).ljust(5),
+                          str(self.rotation_pince_vitesse).ljust(5),
+                          str(self.degre_ouverture_pince).ljust(5),
+                          str(self.rotation_base_vitesse).ljust(5),
+                          button_even), end="\r")
 
 
 

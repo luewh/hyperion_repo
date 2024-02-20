@@ -10,7 +10,9 @@ from threading import Thread, Event
 from joystick import Joystick
 from euler_quaternion import euler_to_quaternion, quaternion_to_euler
 
-
+import logging
+logger = logging.getLogger()
+logger.setLevel(logging.CRITICAL)
 
 class Joystick_MoveGroupe (Joystick):
     def __init__(self,
@@ -19,7 +21,11 @@ class Joystick_MoveGroupe (Joystick):
         super().__init__(sleepTime=0.1,keyboard=False)
 
         moveit_commander.roscpp_initialize(sys.argv)
-        rospy.init_node("move_group_python_interface_tutorial", anonymous=True)
+        rospy.init_node("move_group",
+                        anonymous=True,
+                        log_level=1,
+                        disable_rostime=True,
+                        disable_rosout=True)
 
         """Provides information such as the robot’s kinematic 
         model and the robot’s current joint states"""
@@ -39,8 +45,10 @@ class Joystick_MoveGroupe (Joystick):
         self.stockPose = [[3.69,0,-1.72,-1.73,0],
                           [3.30,0,-1.68,-1.37,0],
                           [2.87,0,-1.41,-1.20,0]]
-
-    def armMove (self,pose):
+    def printRed(self,text):
+        print("{}{}{}".format('\033[93m',text,'\033[0m'))
+    
+    def armMove (self,pose,wait=False):
         if pose == [0,0,0]:
             return
         
@@ -54,10 +62,10 @@ class Joystick_MoveGroupe (Joystick):
         
         (plan, fraction) = self.move_group_arm.compute_cartesian_path(
             waypoints,  # waypoints to follow 
-            0.05,       # eef_step
-            0,      # jump_threshold
+            0.0001,       # eef_step
+            0.01,      # jump_threshold
             avoid_collisions=True)
-        self.move_group_arm.execute(plan, wait=False)
+        self.move_group_arm.execute(plan, wait=wait)
         
         colonne_value = self.move_group_arm.get_current_joint_values()
         verin_value = self.move_group_hand.get_current_joint_values()
@@ -67,10 +75,12 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.stop()
             # verin got to top
             verin_value[0] = 0
+            print("please wait...",end="\r")
             self.move_group_hand.go(verin_value, wait=True)
             # colonne down verin length
             colonne_value[1] -= 0.15
             self.move_group_arm.go(colonne_value, wait=True)
+            print("done")
             
         # if colonne at bottom and verin not at bottom
         if (colonne_value[1] + self.scale_pos * pose[2] < -0.285) and (round(verin_value[0],2) != -0.15):
@@ -78,12 +88,14 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.stop()
             # colonne up verin length
             colonne_value[1] += 0.15
+            print("please wait...",end="\r")
             self.move_group_arm.go(colonne_value, wait=True)
             # verin got to bottom
             verin_value[0] = -0.15
             self.move_group_hand.go(verin_value, wait=True)
-            
-    def pinceMove(self):
+            print("done")
+    
+    def poignetMove(self):
         if self.rotation_pince_vitesse != 0:
             self.move_group_arm.stop()
             current_joints = self.move_group_arm.get_current_joint_values()
@@ -97,40 +109,51 @@ class Joystick_MoveGroupe (Joystick):
             current_joints[0] += self.rotation_base_vitesse * self.scale_rotation
             self.move_group_arm.go(current_joints, wait=True)
     
+    def handMove(self,joints,wait=False):
+        current_joints = self.move_group_hand.get_current_joint_values()
+        # joint assert
+        if len(current_joints) != len(joints):
+            self.printRed("Wrong length")
+            return
+        # stop hand move
+        self.move_group_hand.stop()
+        # get joint goal
+        for index in range(len(joints)):
+            if type(joints[index]) != bool:
+                current_joints[index] = joints[index]
+        # execute
+        print(current_joints)
+        self.move_group_hand.go(current_joints, wait=wait)
+    
     def pickDropMove(self, pickPose, pickDist, pick: bool, event: Event):
         self.move_group_arm.stop()
         self.move_group_hand.stop()
         
+        if event.is_set():
+            return
         # verin go top
+        self.handMove([0, False],wait=True)
+        
         if event.is_set():
             return
-        self.move_group_hand.go([0,0], wait=True)
-        
-        # # colone go top
-        # current_joints = self.move_group_arm.get_current_joint_values()
-        # current_joints[1] = 0
-        # self.move_group_arm.go(current_joints, wait=True)
-        
         # arm go prelevement pose
-        if event.is_set():
-            return
         self.move_group_arm.go(pickPose[:-1], wait=True)
         
         if pick:
             # TODO open pince
             print("open pince")
         else:
-            # TODO close pince
+            # no action needed
             pass
-            
         
-        # arm down cartesian
-        pose = self.move_group_arm.get_current_pose().pose
-        pose.position.z -= pickDist
-        (plan, fraction) = self.move_group_arm.compute_cartesian_path([pose], 0.05, 0, avoid_collisions=True)
         if event.is_set():
             return
-        self.move_group_arm.execute(plan, wait=True)
+        # arm down cartesian
+        self.armMove([0,0,-pickDist],wait=True)
+        # pose = self.move_group_arm.get_current_pose().pose
+        # pose.position.z -= pickDist
+        # (plan, fraction) = self.move_group_arm.compute_cartesian_path([pose], 0.05, 0, avoid_collisions=True)
+        # self.move_group_arm.execute(plan, wait=True)
         
         if pick:
             # TODO close pince
@@ -170,7 +193,6 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.go(current_joints, wait=True)
         else:
             print("finished")
-            # sudo apt install sox
             duration = 1
             freq = 440
             os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
@@ -199,7 +221,6 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.go(current_joints, wait=True)
         else:
             print("finished")
-            # sudo apt install sox
             duration = 1
             freq = 440
             os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
@@ -210,7 +231,7 @@ class Joystick_MoveGroupe (Joystick):
         try:
             while True:
                 self.joystickUpdate()
-                self.pinceMove()
+                self.poignetMove()
                 self.baseMove()
                 pose = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
                 self.armMove(pose)
@@ -223,7 +244,9 @@ class Joystick_MoveGroupe (Joystick):
         
 
 if __name__ == '__main__':
-    joystick_moveGroupe = Joystick_MoveGroupe(scale_pos=0.2,scale_rotation=0.1)
+    joystick_moveGroupe = Joystick_MoveGroupe(
+        scale_pos=0.2, # max 20cm
+        scale_rotation=0.02) # max 1deg
     joystick_moveGroupe.run()
 
 
