@@ -43,7 +43,7 @@ class Joystick():
         self.rotation_vitesse_constant = 1
         self.rotation_base_vitesse = 0
 
-        self.degre_ouverture_pince = 0
+        self.degre_ouverture_pince = round((self.thustmaster.get_axis(3)+1)/2,self.effecteur_x_y_and_pince_sensibilite)
 
         # TODO pub init
     

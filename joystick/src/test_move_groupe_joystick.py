@@ -17,11 +17,12 @@ logger.setLevel(logging.CRITICAL)
 class Joystick_MoveGroupe (Joystick):
     def __init__(self,
                  scale_pos=1.0,
-                 scale_rotation=1.0) -> None:
-        super().__init__(sleepTime=0.1,keyboard=False)
+                 scale_rotation=1.0,
+                 sleepTime=0.1) -> None:
+        super().__init__(sleepTime=sleepTime,keyboard=False)
 
         moveit_commander.roscpp_initialize(sys.argv)
-        rospy.init_node("move_group",
+        rospy.init_node("move_group_hyperion",
                         anonymous=True,
                         log_level=1,
                         disable_rostime=True,
@@ -39,12 +40,19 @@ class Joystick_MoveGroupe (Joystick):
         
         self.scale_pos = scale_pos
         self.scale_rotation = scale_rotation
+        
         self.echPose = [[3.64,0,-2.09,-1.51,0],
                         [3.29,0,-2.09,-1.17,0],
                         [2.91,0,-1.89,-0.99,0]]
+        
         self.stockPose = [[3.69,0,-1.72,-1.73,0],
                           [3.30,0,-1.68,-1.37,0],
                           [2.87,0,-1.41,-1.20,0]]
+        
+        self.degre_ouverture_pince_max = 0.8346
+        self.degre_ouverture_pince_prev = None
+        self.degre_ouverture_pince_prev_prev = None
+        
     def printRed(self,text):
         print("{}{}{}".format('\033[93m',text,'\033[0m'))
     
@@ -62,8 +70,8 @@ class Joystick_MoveGroupe (Joystick):
         
         (plan, fraction) = self.move_group_arm.compute_cartesian_path(
             waypoints,  # waypoints to follow 
-            0.0001,       # eef_step
-            0.01,      # jump_threshold
+            0.001,       # eef_step
+            0,      # jump_threshold
             avoid_collisions=True)
         self.move_group_arm.execute(plan, wait=wait)
         
@@ -94,7 +102,7 @@ class Joystick_MoveGroupe (Joystick):
             verin_value[0] = -0.15
             self.move_group_hand.go(verin_value, wait=True)
             print("done")
-    
+            
     def poignetMove(self):
         if self.rotation_pince_vitesse != 0:
             self.move_group_arm.stop()
@@ -109,7 +117,16 @@ class Joystick_MoveGroupe (Joystick):
             current_joints[0] += self.rotation_base_vitesse * self.scale_rotation
             self.move_group_arm.go(current_joints, wait=True)
     
-    def handMove(self,joints,wait=False):
+    def pinceMove(self):
+        if (self.degre_ouverture_pince_prev_prev != self.degre_ouverture_pince_prev
+            and self.degre_ouverture_pince_prev == self.degre_ouverture_pince):
+            joint_to_go = [False, self.degre_ouverture_pince*self.degre_ouverture_pince_max]
+            self.handMove(joint_to_go, wait=True, abs=True)
+            
+        self.degre_ouverture_pince_prev_prev = self.degre_ouverture_pince_prev
+        self.degre_ouverture_pince_prev = self.degre_ouverture_pince
+    
+    def handMove(self,joints,wait=False,abs=True):
         current_joints = self.move_group_hand.get_current_joint_values()
         # joint assert
         if len(current_joints) != len(joints):
@@ -120,9 +137,11 @@ class Joystick_MoveGroupe (Joystick):
         # get joint goal
         for index in range(len(joints)):
             if type(joints[index]) != bool:
-                current_joints[index] = joints[index]
+                if abs:
+                    current_joints[index] = joints[index]
+                else:
+                    current_joints[index] += joints[index]
         # execute
-        print(current_joints)
         self.move_group_hand.go(current_joints, wait=wait)
     
     def pickDropMove(self, pickPose, pickDist, pick: bool, event: Event):
@@ -132,7 +151,7 @@ class Joystick_MoveGroupe (Joystick):
         if event.is_set():
             return
         # verin go top
-        self.handMove([0, False],wait=True)
+        self.handMove([0, False],wait=True,abs=True)
         
         if event.is_set():
             return
@@ -162,13 +181,14 @@ class Joystick_MoveGroupe (Joystick):
             # TODO open pince
             print("open pince")
         
-        # arm up cartesian
-        pose = self.move_group_arm.get_current_pose().pose
-        pose.position.z += pickDist
-        (plan, fraction) = self.move_group_arm.compute_cartesian_path([pose], 0.05, 0, avoid_collisions=True)
         if event.is_set():
             return
-        self.move_group_arm.execute(plan, wait=True)
+        # arm up cartesian
+        self.armMove([0,0,pickDist],wait=True)
+        # pose = self.move_group_arm.get_current_pose().pose
+        # pose.position.z += pickDist
+        # (plan, fraction) = self.move_group_arm.compute_cartesian_path([pose], 0.05, 0, avoid_collisions=True)
+        # self.move_group_arm.execute(plan, wait=True)
         
     def preleve(self):
         if self.prelevement_1_2_3 == 0:
@@ -228,25 +248,27 @@ class Joystick_MoveGroupe (Joystick):
             
     # movement control loop
     def run(self):
-        try:
-            while True:
+        while True:
+            try:
                 self.joystickUpdate()
                 self.poignetMove()
                 self.baseMove()
+                self.pinceMove()
                 pose = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
                 self.armMove(pose)
                 self.preleve()
                 self.stock()
                 # TODO pub lum cam modePre
                 sleep(self.sleepTime)
-        except KeyboardInterrupt:
-            print("Exiting...")
+            except KeyboardInterrupt:
+                print("Exiting...")
         
 
 if __name__ == '__main__':
     joystick_moveGroupe = Joystick_MoveGroupe(
         scale_pos=0.2, # max 20cm
-        scale_rotation=0.02) # max 1deg
+        scale_rotation=0.1, # max 1deg
+        sleepTime=0.1)
     joystick_moveGroupe.run()
 
 
