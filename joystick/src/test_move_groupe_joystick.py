@@ -53,11 +53,15 @@ class Joystick_MoveGroupe (Joystick):
         self.degre_ouverture_pince_prev = None
         self.degre_ouverture_pince_prev_prev = None
         
+        self.pose_prev = [None, None, None]
+        
     def printRed(self,text):
         print("{}{}{}".format('\033[93m',text,'\033[0m'))
     
     def armMove (self,pose,wait=False):
         if pose == [0,0,0]:
+            if self.pose_prev != [0,0,0]:
+                self.move_group_arm.stop()
             return
         
         self.move_group_arm.stop()
@@ -158,9 +162,11 @@ class Joystick_MoveGroupe (Joystick):
         # arm go prelevement pose
         self.move_group_arm.go(pickPose[:-1], wait=True)
         
+        if event.is_set():
+            return
         if pick:
-            # TODO open pince
-            print("open pince")
+            # open pince at 22%
+            self.handMove([False, 0.22],wait=True,abs=True)
         else:
             # no action needed
             pass
@@ -169,26 +175,18 @@ class Joystick_MoveGroupe (Joystick):
             return
         # arm down cartesian
         self.armMove([0,0,-pickDist],wait=True)
-        # pose = self.move_group_arm.get_current_pose().pose
-        # pose.position.z -= pickDist
-        # (plan, fraction) = self.move_group_arm.compute_cartesian_path([pose], 0.05, 0, avoid_collisions=True)
-        # self.move_group_arm.execute(plan, wait=True)
         
         if pick:
-            # TODO close pince
-            print("close pince")
+            # close pince
+            self.handMove([False, 0],wait=True,abs=True)
         else:
-            # TODO open pince
-            print("open pince")
+            # open pince 2% to release object
+            self.handMove([False, 0.02],wait=True,abs=False)
         
         if event.is_set():
             return
         # arm up cartesian
         self.armMove([0,0,pickDist],wait=True)
-        # pose = self.move_group_arm.get_current_pose().pose
-        # pose.position.z += pickDist
-        # (plan, fraction) = self.move_group_arm.compute_cartesian_path([pose], 0.05, 0, avoid_collisions=True)
-        # self.move_group_arm.execute(plan, wait=True)
         
     def preleve(self):
         if self.prelevement_1_2_3 == 0:
@@ -196,7 +194,7 @@ class Joystick_MoveGroupe (Joystick):
         
         event = Event()
         pickPose = self.echPose[self.prelevement_1_2_3 - 1]
-        moveTask = Thread(target=self.pickDropMove, args=(pickPose, 0.05, True, event))
+        moveTask = Thread(target=self.pickDropMove, args=(pickPose, 0.07, True, event))
         
         moveTask.start()
         while self.prelevement_1_2_3 != 0 and moveTask.is_alive():
@@ -209,7 +207,6 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.stop()
             self.move_group_hand.stop()
             current_joints = self.move_group_arm.get_current_joint_values()
-            current_joints[1] = 0
             self.move_group_arm.go(current_joints, wait=True)
         else:
             print("finished")
@@ -237,7 +234,6 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.stop()
             self.move_group_hand.stop()
             current_joints = self.move_group_arm.get_current_joint_values()
-            current_joints[1] = 0
             self.move_group_arm.go(current_joints, wait=True)
         else:
             print("finished")
@@ -256,6 +252,7 @@ class Joystick_MoveGroupe (Joystick):
                 self.pinceMove()
                 pose = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
                 self.armMove(pose)
+                self.pose_prev = pose
                 self.preleve()
                 self.stock()
                 # TODO pub lum cam modePre
@@ -266,7 +263,7 @@ class Joystick_MoveGroupe (Joystick):
 
 if __name__ == '__main__':
     joystick_moveGroupe = Joystick_MoveGroupe(
-        scale_pos=0.2, # max 20cm
+        scale_pos=0.4, # max 20cm
         scale_rotation=0.1, # max 1deg
         sleepTime=0.1)
     joystick_moveGroupe.run()
