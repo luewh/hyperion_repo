@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 import rospy
 import moveit_commander
 # import moveit_msgs.msg
@@ -45,9 +47,9 @@ class Joystick_MoveGroupe (Joystick):
                         [3.29,0,-2.09,-1.17,0],
                         [2.91,0,-1.89,-0.99,0]]
         
-        self.stockPose = [[3.69,0,-1.72,-1.73,0],
-                          [3.30,0,-1.68,-1.37,0],
-                          [2.87,0,-1.41,-1.20,0]]
+        self.stockPose = [[3.65,0,-1.72,-1.73,0],
+                          [3.28,0,-1.67,-1.39,0],
+                          [2.88,0,-1.45,-1.17,0]]
         
         self.degre_ouverture_pince_max = 0.8346
         self.degre_ouverture_pince_prev = None
@@ -55,8 +57,14 @@ class Joystick_MoveGroupe (Joystick):
         
         self.pose_prev = [None, None, None]
         
-    def printRed(self,text):
-        print("{}{}{}".format('\033[93m',text,'\033[0m'))
+    def printRed(self,text, end='\r\n'):
+        print("{}{}{}".format('\033[91m',text,'\033[0m'), end=end)
+    
+    def printGreen(self,text, end='\r\n'):
+        print("{}{}{}".format('\033[92m',text,'\033[0m'), end=end)
+    
+    def printYellow(self,text, end='\r\n'):
+        print("{}{}{}".format('\033[93m',text,'\033[0m'), end=end)
     
     def armMove (self,pose,wait=False):
         if pose == [0,0,0]:
@@ -74,7 +82,7 @@ class Joystick_MoveGroupe (Joystick):
         
         (plan, fraction) = self.move_group_arm.compute_cartesian_path(
             waypoints,  # waypoints to follow 
-            0.001,       # eef_step
+            0.005,       # eef_step
             0,      # jump_threshold
             avoid_collisions=True)
         self.move_group_arm.execute(plan, wait=wait)
@@ -87,12 +95,12 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.stop()
             # verin got to top
             verin_value[0] = 0
-            print("please wait...",end="\r")
+            self.printYellow("please wait...")
             self.move_group_hand.go(verin_value, wait=True)
             # colonne down verin length
             colonne_value[1] -= 0.15
             self.move_group_arm.go(colonne_value, wait=True)
-            print("done")
+            self.printGreen("verin in done")
             
         # if colonne at bottom and verin not at bottom
         if (colonne_value[1] + self.scale_pos * pose[2] < -0.285) and (round(verin_value[0],2) != -0.15):
@@ -100,12 +108,12 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.stop()
             # colonne up verin length
             colonne_value[1] += 0.15
-            print("please wait...",end="\r")
+            self.printYellow("please wait...")
             self.move_group_arm.go(colonne_value, wait=True)
             # verin got to bottom
             verin_value[0] = -0.15
             self.move_group_hand.go(verin_value, wait=True)
-            print("done")
+            self.printGreen("verin out done")
             
     def poignetMove(self):
         if self.rotation_pince_vitesse != 0:
@@ -192,55 +200,85 @@ class Joystick_MoveGroupe (Joystick):
         if self.prelevement_1_2_3 == 0:
             return
         
-        event = Event()
-        pickPose = self.echPose[self.prelevement_1_2_3 - 1]
-        moveTask = Thread(target=self.pickDropMove, args=(pickPose, 0.07, True, event))
+        # check gripper to be closed
+        current_joints = self.move_group_hand.get_current_joint_values()
+        if current_joints[1] > 0.1:
+            self.printRed("please close the gripper", end="\r")
+            return
         
+        # remember preleve number
+        numberPreleve = self.prelevement_1_2_3
+        # get preleve position
+        pickPose = self.echPose[numberPreleve - 1]
+        # init pick thread
+        event = Event()
+        moveTask = Thread(target=self.pickDropMove, args=(pickPose, 0.07/self.scale_pos, True, event))
+        
+        # run thread
         moveTask.start()
-        while self.prelevement_1_2_3 != 0 and moveTask.is_alive():
+        # update joystick while preleve number not changed
+        # and pick thread not end
+        while self.prelevement_1_2_3 == numberPreleve and moveTask.is_alive():
             self.joystickUpdate()
             sleep(self.sleepTime)
-            
+        
+        # preleve number changed during pick
         if moveTask.is_alive():
-            print("aborted")
+            self.printRed("aborted")
+            # end thread
             event.set()  
             self.move_group_arm.stop()
             self.move_group_hand.stop()
+            # set at current joint position
             current_joints = self.move_group_arm.get_current_joint_values()
             self.move_group_arm.go(current_joints, wait=True)
+        # pick drop thread end properly
         else:
-            print("finished")
-            duration = 1
-            freq = 440
-            os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
-            sleep(1)
+            self.printYellow("finished, please release the button...", end="\r")
+            # wait till preleve button released
+            while self.prelevement_1_2_3 != 0:
+                self.joystickUpdate()
+                sleep(self.sleepTime)
+            self.printGreen("preleve {} done".format(numberPreleve))
     
     def stock(self):
         if self.macro_stockage_1_2_3 == 0:
             return
         
+        # remember stock number
+        numberStock = self.macro_stockage_1_2_3
+        # get stock position
+        dropPose = self.stockPose[numberStock - 1]
+        # init drop thread
         event = Event()
-        dropPose = self.stockPose[self.macro_stockage_1_2_3 - 1]
-        moveTask = Thread(target=self.pickDropMove, args=(dropPose, 0.1, False, event))
+        dropTask = Thread(target=self.pickDropMove, args=(dropPose, 0.1/self.scale_pos, False, event))
         
-        moveTask.start()
-        while self.macro_stockage_1_2_3 != 0 and moveTask.is_alive():
+        # run thread
+        dropTask.start()
+        # update joystick while stock number not changed
+        # and drop thread not end
+        while self.macro_stockage_1_2_3 == numberStock and dropTask.is_alive():
             self.joystickUpdate()
             sleep(self.sleepTime)
-            
-        if moveTask.is_alive():
-            print("aborted")
+        
+        # preleve number changed during drop
+        if dropTask.is_alive():
+            self.printRed("aborted")
+            # end thread
             event.set()  
             self.move_group_arm.stop()
             self.move_group_hand.stop()
+            # set at current joint position
             current_joints = self.move_group_arm.get_current_joint_values()
             self.move_group_arm.go(current_joints, wait=True)
+        # pick drop thread end properly
         else:
-            print("finished")
-            duration = 1
-            freq = 440
-            os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
-            sleep(1)
+            self.printYellow("finished, please release the button...", end="\r")
+            # wait till preleve button released
+            while self.macro_stockage_1_2_3 != 0:
+                self.joystickUpdate()
+                sleep(self.sleepTime)
+            self.printGreen("stock {} done".format(numberStock))
             
     # movement control loop
     def run(self):
@@ -251,7 +289,7 @@ class Joystick_MoveGroupe (Joystick):
                 self.baseMove()
                 self.pinceMove()
                 pose = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
-                self.armMove(pose)
+                self.armMove(pose, wait=False)
                 self.pose_prev = pose
                 self.preleve()
                 self.stock()
@@ -263,7 +301,7 @@ class Joystick_MoveGroupe (Joystick):
 
 if __name__ == '__main__':
     joystick_moveGroupe = Joystick_MoveGroupe(
-        scale_pos=0.4, # max 20cm
+        scale_pos=0.2, # max 20cm
         scale_rotation=0.1, # max 1deg
         sleepTime=0.1)
     joystick_moveGroupe.run()

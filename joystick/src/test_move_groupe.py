@@ -1,4 +1,4 @@
-
+#! /usr/bin/env python3
 # roslaunch moveit_test_sysmap_collision demo.launch
 
 from euler_quaternion import euler_to_quaternion, quaternion_to_euler

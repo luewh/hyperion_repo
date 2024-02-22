@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 import pygame
 from time import sleep
 
@@ -35,13 +37,14 @@ class Joystick():
         self.effecteur_y_vitesse = 0
         self.effecteur_z_vitesse = 0
         self.effecteur_x_y_and_pince_sensibilite = 2
-        self.effecteur_x_y_and_pince_threshold = 0.1
+        self.effecteur_x_y_and_pince_threshold = 0.15
         self.effecteur_z_vitesse_constant = 0.05
 
         # négatif pour rotation gauche, positif pour rotation droite,
         self.rotation_pince_vitesse = 0
         self.rotation_vitesse_constant = 1
         self.rotation_base_vitesse = 0
+        self.rotation_base_vitesse_threshold = 0.4
 
         self.degre_ouverture_pince = round((self.thustmaster.get_axis(3)+1)/2,self.effecteur_x_y_and_pince_sensibilite)
 
@@ -235,7 +238,7 @@ class Joystick():
                 if event.dict["axis"] == 2:
                     if self.rotation_base_vitesse != -round(self.thustmaster.get_axis(2),self.effecteur_x_y_and_pince_sensibilite):
                         self.rotation_base_vitesse = -round(self.thustmaster.get_axis(2),self.effecteur_x_y_and_pince_sensibilite)
-                        if abs(self.rotation_base_vitesse) <= self.effecteur_x_y_and_pince_threshold:
+                        if abs(self.rotation_base_vitesse) <= self.rotation_base_vitesse_threshold:
                             self.rotation_base_vitesse = 0
                         # TODO pub self.rotation_base_vitesse
                 
@@ -244,7 +247,7 @@ class Joystick():
                         self.degre_ouverture_pince = round((self.thustmaster.get_axis(3)+1)/2,self.effecteur_x_y_and_pince_sensibilite)
                         # TODO pub self.degre_ouverture_pince
             
-            print(" "*100, end="\r")
+            print(" "*120, end="\r")
             print("X : {} Y : {} Z : {} R : {} PINCE : {} BASE : {} BUTTON : {}"
                   .format(str(self.effecteur_x_vitesse).ljust(5),
                           str(self.effecteur_y_vitesse).ljust(5),
