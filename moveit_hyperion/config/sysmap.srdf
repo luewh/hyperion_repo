@@ -20,12 +20,17 @@
         <joint name="verin_pince"/>
         <joint name="pince_doigt1"/>
     </group>
+    <group name="scara_couvercle">
+        <joint name="stockageBoite_couvercle"/>
+        <joint name="stockageBoite_couvercle2"/>
+        <joint name="stockageBoite_couvercle3"/>
+    </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="scara_arm">
-        <joint name="base_colonne" value="1.3443"/>
+        <joint name="base_colonne" value="0"/>
         <joint name="colonne_interne" value="0"/>
-        <joint name="externe_poignet" value="2"/>
-        <joint name="interne_externe" value="2.2544"/>
+        <joint name="externe_poignet" value="0"/>
+        <joint name="interne_externe" value="0"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="scara_hand" parent_link="externe" group="scara_hand"/>
@@ -39,17 +44,32 @@
     <disable_collisions link1="aileron" link2="electrique" reason="Never"/>
     <disable_collisions link1="aileron" link2="interne" reason="Never"/>
     <disable_collisions link1="aileron" link2="platine" reason="Adjacent"/>
-    <disable_collisions link1="aileron" link2="stockage" reason="Default"/>
+    <disable_collisions link1="aileron" link2="stockage_boite" reason="Never"/>
+    <disable_collisions link1="aileron" link2="stockage_boite2" reason="Default"/>
+    <disable_collisions link1="aileron" link2="stockage_boite3" reason="Never"/>
+    <disable_collisions link1="aileron" link2="stockage_couvercle" reason="Never"/>
+    <disable_collisions link1="aileron" link2="stockage_couvercle2" reason="Default"/>
+    <disable_collisions link1="aileron" link2="stockage_couvercle3" reason="Never"/>
     <disable_collisions link1="base" link2="batterie" reason="Never"/>
     <disable_collisions link1="base" link2="colonne" reason="Adjacent"/>
     <disable_collisions link1="base" link2="electrique" reason="Never"/>
     <disable_collisions link1="base" link2="platine" reason="Adjacent"/>
     <disable_collisions link1="base" link2="poignet" reason="Never"/>
-    <disable_collisions link1="base" link2="stockage" reason="Never"/>
+    <disable_collisions link1="base" link2="stockage_boite" reason="Never"/>
+    <disable_collisions link1="base" link2="stockage_boite2" reason="Never"/>
+    <disable_collisions link1="base" link2="stockage_boite3" reason="Never"/>
+    <disable_collisions link1="base" link2="stockage_couvercle" reason="Never"/>
+    <disable_collisions link1="base" link2="stockage_couvercle2" reason="Never"/>
+    <disable_collisions link1="base" link2="stockage_couvercle3" reason="Never"/>
     <disable_collisions link1="batterie" link2="colonne" reason="Never"/>
     <disable_collisions link1="batterie" link2="electrique" reason="Never"/>
     <disable_collisions link1="batterie" link2="platine" reason="Adjacent"/>
-    <disable_collisions link1="batterie" link2="stockage" reason="Never"/>
+    <disable_collisions link1="batterie" link2="stockage_boite" reason="Never"/>
+    <disable_collisions link1="batterie" link2="stockage_boite2" reason="Never"/>
+    <disable_collisions link1="batterie" link2="stockage_boite3" reason="Never"/>
+    <disable_collisions link1="batterie" link2="stockage_couvercle" reason="Never"/>
+    <disable_collisions link1="batterie" link2="stockage_couvercle2" reason="Never"/>
+    <disable_collisions link1="batterie" link2="stockage_couvercle3" reason="Never"/>
     <disable_collisions link1="colonne" link2="doigt1" reason="Never"/>
     <disable_collisions link1="colonne" link2="doigt2" reason="Never"/>
     <disable_collisions link1="colonne" link2="doigt3" reason="Never"/>
@@ -59,7 +79,12 @@
     <disable_collisions link1="colonne" link2="pince_base" reason="Never"/>
     <disable_collisions link1="colonne" link2="platine" reason="Never"/>
     <disable_collisions link1="colonne" link2="poignet" reason="Never"/>
-    <disable_collisions link1="colonne" link2="stockage" reason="Never"/>
+    <disable_collisions link1="colonne" link2="stockage_boite" reason="Never"/>
+    <disable_collisions link1="colonne" link2="stockage_boite2" reason="Never"/>
+    <disable_collisions link1="colonne" link2="stockage_boite3" reason="Never"/>
+    <disable_collisions link1="colonne" link2="stockage_couvercle" reason="Never"/>
+    <disable_collisions link1="colonne" link2="stockage_couvercle2" reason="Never"/>
+    <disable_collisions link1="colonne" link2="stockage_couvercle3" reason="Never"/>
     <disable_collisions link1="colonne" link2="verin" reason="Never"/>
     <disable_collisions link1="doigt1" link2="doigt2" reason="Never"/>
     <disable_collisions link1="doigt1" link2="doigt3" reason="Never"/>
@@ -80,7 +105,12 @@
     <disable_collisions link1="doigt3" link2="poignet" reason="Never"/>
     <disable_collisions link1="doigt3" link2="verin" reason="Never"/>
     <disable_collisions link1="electrique" link2="platine" reason="Adjacent"/>
-    <disable_collisions link1="electrique" link2="stockage" reason="Never"/>
+    <disable_collisions link1="electrique" link2="stockage_boite" reason="Default"/>
+    <disable_collisions link1="electrique" link2="stockage_boite2" reason="Default"/>
+    <disable_collisions link1="electrique" link2="stockage_boite3" reason="Default"/>
+    <disable_collisions link1="electrique" link2="stockage_couvercle" reason="Never"/>
+    <disable_collisions link1="electrique" link2="stockage_couvercle2" reason="Never"/>
+    <disable_collisions link1="electrique" link2="stockage_couvercle3" reason="Never"/>
     <disable_collisions link1="externe" link2="interne" reason="Adjacent"/>
     <disable_collisions link1="externe" link2="pince_base" reason="Never"/>
     <disable_collisions link1="externe" link2="platine" reason="Never"/>
@@ -93,6 +123,26 @@
     <disable_collisions link1="pince_base" link2="poignet" reason="Never"/>
     <disable_collisions link1="pince_base" link2="verin" reason="Adjacent"/>
     <disable_collisions link1="platine" link2="poignet" reason="Never"/>
-    <disable_collisions link1="platine" link2="stockage" reason="Adjacent"/>
+    <disable_collisions link1="platine" link2="stockage_boite" reason="Adjacent"/>
+    <disable_collisions link1="platine" link2="stockage_boite2" reason="Adjacent"/>
+    <disable_collisions link1="platine" link2="stockage_boite3" reason="Adjacent"/>
+    <disable_collisions link1="platine" link2="stockage_couvercle" reason="Never"/>
+    <disable_collisions link1="platine" link2="stockage_couvercle2" reason="Never"/>
+    <disable_collisions link1="platine" link2="stockage_couvercle3" reason="Never"/>
     <disable_collisions link1="poignet" link2="verin" reason="Adjacent"/>
+    <disable_collisions link1="stockage_boite" link2="stockage_boite2" reason="Never"/>
+    <disable_collisions link1="stockage_boite" link2="stockage_boite3" reason="Never"/>
+    <disable_collisions link1="stockage_boite" link2="stockage_couvercle" reason="Adjacent"/>
+    <disable_collisions link1="stockage_boite" link2="stockage_couvercle2" reason="Never"/>
+    <disable_collisions link1="stockage_boite" link2="stockage_couvercle3" reason="Never"/>
+    <disable_collisions link1="stockage_boite2" link2="stockage_boite3" reason="Never"/>
+    <disable_collisions link1="stockage_boite2" link2="stockage_couvercle" reason="Never"/>
+    <disable_collisions link1="stockage_boite2" link2="stockage_couvercle2" reason="Adjacent"/>
+    <disable_collisions link1="stockage_boite2" link2="stockage_couvercle3" reason="Never"/>
+    <disable_collisions link1="stockage_boite3" link2="stockage_couvercle" reason="Never"/>
+    <disable_collisions link1="stockage_boite3" link2="stockage_couvercle2" reason="Never"/>
+    <disable_collisions link1="stockage_boite3" link2="stockage_couvercle3" reason="Adjacent"/>
+    <disable_collisions link1="stockage_couvercle" link2="stockage_couvercle2" reason="Never"/>
+    <disable_collisions link1="stockage_couvercle" link2="stockage_couvercle3" reason="Never"/>
+    <disable_collisions link1="stockage_couvercle2" link2="stockage_couvercle3" reason="Never"/>
 </robot>

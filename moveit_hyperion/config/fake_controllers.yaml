@@ -11,6 +11,12 @@ controller_list:
     joints:
       - poignet_verin
       - pince_doigt1
+  - name: fake_scara_couvercle_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - stockageBoite_couvercle
+      - stockageBoite_couvercle2
+      - stockageBoite_couvercle3
 initial:  # Define initial robot poses per group
   - group: scara_arm
     pose: home
