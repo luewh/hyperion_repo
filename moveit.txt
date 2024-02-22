@@ -3,7 +3,8 @@ https://ros-planning.github.io/moveit_tutorials/
 
 
 
-installation ou sudo apt install ros-noetic-moveit
+installation
+sudo apt install ros-noetic-moveit
 https://ros-planning.github.io/moveit_tutorials/doc/getting_started/getting_started.html
 
 wstool init .

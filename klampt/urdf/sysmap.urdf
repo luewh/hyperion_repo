@@ -34,7 +34,7 @@
         </collision>
     </link>
 
-    <link name="stockage">
+    <!-- <link name="stockage">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
@@ -45,6 +45,96 @@
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockageV6_only_optimized.stl"/>
+            </geometry>
+        </collision>
+    </link> -->
+
+    <link name="stockage_boite">
+        <visual>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_optimized.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_convexHull.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="stockage_couvercle">
+        <visual>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_optimized.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_convexHull.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="stockage_boite2">
+        <visual>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_optimized.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_convexHull.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="stockage_couvercle2">
+        <visual>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_optimized.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_convexHull.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="stockage_boite3">
+        <visual>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_optimized.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_convexHull.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="stockage_couvercle3">
+        <visual>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_optimized.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_convexHull.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>
@@ -237,10 +327,52 @@
         <child link="aileron"/>
     </joint>
 
-    <joint name="platine_stockage" type="fixed">
+    <!-- <joint name="platine_stockage" type="fixed">
         <origin xyz="-0.2789 -0.06397 0.0" rpy="0.0 0.0 0.0"/>
         <parent link="platine"/>
         <child link="stockage"/>
+    </joint> -->
+
+    <joint name="platine_stockageBoite" type="fixed">
+        <origin xyz="-0.2789 -0.06397 0.0" rpy="1.57 0.0 -1.57"/>
+        <parent link="platine"/>
+        <child link="stockage_boite"/>
+    </joint>
+
+    <joint name="stockageBoite_couvercle" type="revolute">
+        <origin xyz="-0.0185 0.1203 0.1528" rpy="-0.117 0.0 0.0"/>
+        <parent link="stockage_boite"/>
+        <child link="stockage_couvercle"/>
+        <axis xyz="-1.0 0.0 0.0"/>
+        <limit lower="0.0" upper="1.453" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="platine_stockageBoite2" type="fixed">
+        <origin xyz="-0.2789 0.05803 0.0" rpy="1.57 0.0 -1.57"/>
+        <parent link="platine"/>
+        <child link="stockage_boite2"/>
+    </joint>
+
+    <joint name="stockageBoite_couvercle2" type="revolute">
+        <origin xyz="-0.0185 0.1203 0.1528" rpy="-0.117 0.0 0.0"/>
+        <parent link="stockage_boite2"/>
+        <child link="stockage_couvercle2"/>
+        <axis xyz="-1.0 0.0 0.0"/>
+        <limit lower="0.0" upper="1.453" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <joint name="platine_stockageBoite3" type="fixed">
+        <origin xyz="-0.2789 0.18003 0.0" rpy="1.57 0.0 -1.57"/>
+        <parent link="platine"/>
+        <child link="stockage_boite3"/>
+    </joint>
+
+    <joint name="stockageBoite_couvercle3" type="revolute">
+        <origin xyz="-0.0185 0.1203 0.1528" rpy="-0.117 0.0 0.0"/>
+        <parent link="stockage_boite3"/>
+        <child link="stockage_couvercle3"/>
+        <axis xyz="-1.0 0.0 0.0"/>
+        <limit lower="0.0" upper="1.453" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="platine_electrique" type="fixed">
