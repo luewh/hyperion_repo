@@ -43,13 +43,13 @@ class Joystick_MoveGroupe (Joystick):
         self.scale_pos = scale_pos
         self.scale_rotation = scale_rotation
         
-        self.echPose = [[3.64,0,-2.09,-1.51,0],
-                        [3.29,0,-2.09,-1.17,0],
-                        [2.91,0,-1.89,-0.99,0]]
+        self.prelevPose = [[2.75,0,4.65,3.10],
+                           [2.44,0,4.64,2.80],
+                           [2.04,0,4.44,2.60]]
         
-        self.stockPose = [[3.65,0,-1.72,-1.73,0],
-                          [3.28,0,-1.67,-1.39,0],
-                          [2.88,0,-1.45,-1.17,0]]
+        self.stockPose = [[2.01,0,4.01,3.51],
+                          [2.44,0,4.22,3.73],
+                          [2.79,0,4.24,4.06]]
         
         self.pince_max = 0.8346
         self.degre_ouverture_pince_prev = None
@@ -173,6 +173,14 @@ class Joystick_MoveGroupe (Joystick):
                     current_joints[index] = joints[index]
                 else:
                     current_joints[index] += joints[index]
+        # limit min
+        if current_joints[1] < 0:
+            current_joints[1] = 0
+            self.printYellow("pince min", end='\r')
+        # limit max
+        if current_joints[1] > self.pince_max:
+            current_joints[1] = self.pince_max
+            self.printYellow("pince max", end='\r')
         # execute
         self.move_group_hand.go(current_joints, wait=wait)
     
@@ -188,7 +196,7 @@ class Joystick_MoveGroupe (Joystick):
         if event.is_set():
             return
         # arm go prelevement pose
-        self.move_group_arm.go(pickPose[:-1], wait=True)
+        self.move_group_arm.go(pickPose, wait=True)
         
         if event.is_set():
             return
@@ -208,8 +216,8 @@ class Joystick_MoveGroupe (Joystick):
             # close pince
             self.handMove([False, 0],wait=True,abs=True)
         else:
-            # open pince 2% to release object
-            self.handMove([False, 0.02],wait=True,abs=False)
+            # open pince 5% to release object
+            self.handMove([False, 0.05],wait=True,abs=False)
         
         if event.is_set():
             return
@@ -229,7 +237,7 @@ class Joystick_MoveGroupe (Joystick):
         # remember preleve number
         numberPreleve = self.prelevement_1_2_3
         # get preleve position
-        pickPose = self.echPose[numberPreleve - 1]
+        pickPose = self.prelevPose[numberPreleve - 1]
         # init pick thread
         event = Event()
         moveTask = Thread(target=self.pickDropMove, args=(pickPose, 0.07/self.scale_pos, True, event))
@@ -244,7 +252,7 @@ class Joystick_MoveGroupe (Joystick):
         
         # preleve number changed during pick
         if moveTask.is_alive():
-            self.printRed("aborted")
+            self.printRed("aborted preleve {}".format(numberPreleve))
             # end thread
             event.set()  
             self.move_group_arm.stop()
@@ -283,7 +291,7 @@ class Joystick_MoveGroupe (Joystick):
         
         # preleve number changed during drop
         if dropTask.is_alive():
-            self.printRed("aborted")
+            self.printRed("aborted stock {}".format(numberStock))
             # end thread
             event.set()  
             self.move_group_arm.stop()
@@ -305,12 +313,15 @@ class Joystick_MoveGroupe (Joystick):
         while True:
             try:
                 self.joystickUpdate()
+                # joint movement, wait=True
                 self.poignetMove()
                 self.baseMove()
                 self.pinceMove()
+                # arm movement, wait=False
                 pose = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
                 self.armMove(pose, wait=False)
                 self.pose_prev = pose
+                # macro movement, wait=True
                 self.preleve()
                 self.stock()
                 # TODO pub lum cam modePre
