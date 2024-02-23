@@ -6,7 +6,7 @@ import platform
 if platform.system() != "Windows":
         import rospy
         import sys
-        from std_msgs.msg import String,Int8,Int16,Float32
+        from std_msgs.msg import String,Int8,Int16,Float32,Float32MultiArray
         from geometry_msgs.msg import Twist
         
 class Subscriber() :
@@ -35,7 +35,6 @@ class Subscriber() :
         rospy.Subscriber("IHM/prelevement/PrelevEtat2",Int16, self.CallbackPrelevEtat2)
         rospy.Subscriber("IHM/prelevement/PrelevEtat3",Int16, self.CallbackPrelevEtat3)
         
-        
         #Subscriber moteurs
         rospy.Subscriber("IHM/moteurs/positions_theo/PosDemAxe1", Float32, self.CallbackMajPosDemAxe1)
         rospy.Subscriber("IHM/moteurs/positions_theo/PosDemAxe2", Float32, self.CallbackMajPosDemAxe2) 
@@ -44,14 +43,8 @@ class Subscriber() :
         rospy.Subscriber("IHM/moteurs/positions_theo/PosDemAxe5", Float32, self.CallbackMajPosDemAxe5)
         rospy.Subscriber("IHM/moteurs/positions_theo/PosDemAxe6", Float32, self.CallbackMajPosDemAxe6)
         
-        rospy.Subscriber("IHM/moteurs/retours_positions/PosRetourCapteurAxe1", Float32, self.CallbackMajPosRetAxe1)
-        rospy.Subscriber("IHM/moteurs/retours_positions/PosRetourCapteurAxe2", Float32, self.CallbackMajPosRetAxe2)
-        rospy.Subscriber("IHM/moteurs/retours_positions/PosRetourCapteurAxe3", Float32, self.CallbackMajPosRetAxe3)
-        rospy.Subscriber("IHM/moteurs/retours_positions/PosRetourCapteurAxe4", Float32, self.CallbackMajPosRetAxe4)
-        rospy.Subscriber("IHM/moteurs/retours_positions/PosRetourCapteurAxe5", Float32, self.CallbackMajPosRetAxe5)
-        rospy.Subscriber("IHM/moteurs/retours_positions/PosRetourCapteurAxe6", Float32, self.CallbackMajPosRetAxe6)
+        rospy.Subscriber("IHM/moteurs/retours_positions", Float32MultiArray, self.CallbackMajPosRet)
         
-
         #subscriber position cartésienne
         rospy.Subscriber("IHM/PositionRobot/PosX_TCP", Float32, self.CallbackMajTCP_X)
         rospy.Subscriber("IHM/PositionRobot/PosY_TCP", Float32, self.CallbackMajTCP_Y)
@@ -120,27 +113,14 @@ class Subscriber() :
     def CallbackMajPosDemAxe6(self,data):
         PosAxe = self.MiseAFormatPosition(data.data)
         self.IHM.frame_input.labelAxe6Demandee.configure(text = "Axe 6 : " + PosAxe)
-        #Appel fonction de control # control automatique toute les 0.5s
-    
+        #Appel fonction de control # control automatique toute les 0.5s    
 
-    def CallbackMajPosRetAxe1(self,data): #OK
-        PosAxe = self.MiseAFormatPosition(data.data)
-        self.IHM.frame_input.labelAxe1Reel.configure(text = "Axe 1 : " + PosAxe)
-    def CallbackMajPosRetAxe2(self,data):
-        PosAxe = self.MiseAFormatPosition(data.data)
-        self.IHM.frame_input.labelAxe2Reel.configure(text = "Axe 2 : " + PosAxe)
-    def CallbackMajPosRetAxe3(self,data):
-        PosAxe = self.MiseAFormatPosition(data.data)
-        self.IHM.frame_input.labelAxe3Reel.configure(text = "Axe 3 : " + PosAxe)
-    def CallbackMajPosRetAxe4(self,data):
-        PosAxe = self.MiseAFormatPosition(data.data)
-        self.IHM.frame_input.labelAxe4Reel.configure(text = "Axe 4 : " + PosAxe)
-    def CallbackMajPosRetAxe5(self,data):
-        PosAxe = self.MiseAFormatPosition(data.data)
-        self.IHM.frame_input.labelAxe5Reel.configure(text = "Axe 5 : " + PosAxe)
-    def CallbackMajPosRetAxe6(self,data):
-        PosAxe = self.MiseAFormatPosition(data.data)
-        self.IHM.frame_input.labelAxe6Reel.configure(text = "Axe 6 : " + PosAxe)
+    def CallbackMajPosRet(self,data): # A VALIDER
+        self.IHM.frame_input.labelAxe1Reel.configure(text = "Axe 1 : " + self.MiseAFormatPosition(data.data[0]))
+        self.IHM.frame_input.labelAxe2Reel.configure(text = "Axe 2 : " + self.MiseAFormatPosition(data.data[1]))
+        self.IHM.frame_input.labelAxe3Reel.configure(text = "Axe 3 : " + self.MiseAFormatPosition(data.data[2]))
+        self.IHM.frame_input.labelAxe4Reel.configure(text = "Axe 4 : " + self.MiseAFormatPosition(data.data[3]))
+        self.IHM.frame_input.labelAxe5Reel.configure(text = "Axe 5 : " + self.MiseAFormatPosition(data.data[4]))
         
 
     def CallbackMajTCP_X(self,data): #OK
