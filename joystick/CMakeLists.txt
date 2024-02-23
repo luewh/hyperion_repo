@@ -10,6 +10,7 @@ project(joystick)
 find_package(catkin REQUIRED COMPONENTS
   moveit_commander
   rospy
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions

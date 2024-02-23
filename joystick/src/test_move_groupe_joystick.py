@@ -2,9 +2,10 @@
 
 import rospy
 import moveit_commander
-# import moveit_msgs.msg
+
+from std_msgs.msg import Bool
+
 import sys
-import os
 import copy
 from time import sleep
 from threading import Thread, Event
@@ -60,13 +61,23 @@ class Joystick_MoveGroupe (Joystick):
         
         self.pose_prev = [None, None, None]
         
+        self.macro_position_zero_prev = None
+        self.homeDone = None
+        self.home_pub = rospy.Publisher('/home', Bool, queue_size=1)
+        rospy.Subscriber('/home', Bool, self.homeCallback)
+        
+        
+        
     def printRed(self,text, end='\r\n'):
+        print(" "*120, end='\r')
         print("{}{}{}".format('\033[91m',text,'\033[0m'), end=end)
     
     def printGreen(self,text, end='\r\n'):
+        print(" "*120, end='\r')
         print("{}{}{}".format('\033[92m',text,'\033[0m'), end=end)
     
     def printYellow(self,text, end='\r\n'):
+        print(" "*120, end='\r')
         print("{}{}{}".format('\033[93m',text,'\033[0m'), end=end)
     
     def armMove (self,pose,wait=False):
@@ -307,6 +318,27 @@ class Joystick_MoveGroupe (Joystick):
                 self.joystickUpdate()
                 sleep(self.sleepTime)
             self.printGreen("stock {} done".format(numberStock))
+    
+    def home(self):
+        if self.macro_position_zero and not self.macro_position_zero_prev:
+            # tell physical scara to go home
+            self.home_pub.publish(True)
+            # scara arm and hand go home
+            self.move_group_arm.go([0,0,0,0], wait=True)
+            self.move_group_hand.go([0,0], wait=True)
+            
+            # waiting physical scara home done
+            self.homeDone = False
+            while not self.homeDone:
+                self.printYellow("Waiting physical home to be done...", end='\r')
+                sleep(self.sleepTime)
+            
+        self.macro_position_zero_prev = self.macro_position_zero
+            
+    def homeCallback(self, home):
+        if not home.data:
+            self.printGreen("Physical home done")
+            self.homeDone = True
             
     # movement control loop
     def run(self):
@@ -324,17 +356,20 @@ class Joystick_MoveGroupe (Joystick):
                 # macro movement, wait=True
                 self.preleve()
                 self.stock()
+                self.home()
                 # TODO pub lum cam modePre
                 sleep(self.sleepTime)
             except KeyboardInterrupt:
-                print("Exiting...")
+                self.printRed("Exiting...")
         
 
 if __name__ == '__main__':
+    
     joystick_moveGroupe = Joystick_MoveGroupe(
         scale_pos=0.2, # max 20cm
         scale_rotation=0.1, # max 1deg
         sleepTime=0.1)
+    
     joystick_moveGroupe.run()
 
 
