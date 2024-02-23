@@ -34,21 +34,6 @@
         </collision>
     </link>
 
-    <!-- <link name="stockage">
-        <visual>
-            <origin rpy="1.57 0.0 0.0" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockageV6_optimized.stl"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin rpy="1.57 0.0 0.0" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockageV6_only_optimized.stl"/>
-            </geometry>
-        </collision>
-    </link> -->
-
     <link name="stockage_boite">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
@@ -267,6 +252,7 @@
             </geometry>
         </visual>
         <collision>
+            <origin rpy="1.57 0.0 0.0" />
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_base_convexHull.stl"/>
             </geometry>
@@ -281,6 +267,7 @@
             </geometry>
         </visual>
         <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
             </geometry>
@@ -295,6 +282,7 @@
             </geometry>
         </visual>
         <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
             </geometry>
@@ -309,6 +297,7 @@
             </geometry>
         </visual>
         <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
             </geometry>
@@ -326,12 +315,6 @@
         <parent link="platine"/>
         <child link="aileron"/>
     </joint>
-
-    <!-- <joint name="platine_stockage" type="fixed">
-        <origin xyz="-0.2789 -0.06397 0.0" rpy="0.0 0.0 0.0"/>
-        <parent link="platine"/>
-        <child link="stockage"/>
-    </joint> -->
 
     <joint name="platine_stockageBoite" type="fixed">
         <origin xyz="-0.2789 -0.06397 0.0" rpy="1.57 0.0 -1.57"/>
@@ -394,11 +377,11 @@
     </joint>
 
     <joint name="base_colonne" type="revolute">
-        <origin xyz="0.0 0.0 0.03" rpy="0.0 0.0 0.0"/>
+        <origin xyz="0.0 0.0 0.03" rpy="0.0 0.0 -5.4044"/>
         <parent link="base"/>
         <child link="colonne"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-6" upper="6" effort="0.0" velocity="0.0"/>
+        <limit lower="0" upper="6.35" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="colonne_interne" type="prismatic">
@@ -410,19 +393,19 @@
     </joint>
 
     <joint name="interne_externe" type="revolute">
-        <origin xyz="0.214559 0.163904 -0.005" rpy="0.0 0.0 0.0"/>
+        <origin xyz="0.214559 0.163904 -0.005" rpy="0.0 0.0 2.56"/>
         <parent link="interne"/>
         <child link="externe"/>
-        <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-2.1" upper="2.56" effort="0.0" velocity="0.0"/>
+        <axis xyz="0.0 0.0 -1.0"/>
+        <limit lower="0.0" upper="4.66" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="externe_poignet" type="revolute">
-        <origin xyz="0.29117 0.13275 0.030" rpy="0.0 0.0 0.0"/>
+        <origin xyz="0.29117 0.13275 0.030" rpy="0.0 0.0 2.36"/>
         <parent link="externe"/>
         <child link="poignet"/>
-        <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-3" upper="3" effort="0.0" velocity="0.0"/>
+        <axis xyz="0.0 0.0 -1.0"/>
+        <limit lower="0" upper="6.35" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="poignet_verin" type="prismatic">

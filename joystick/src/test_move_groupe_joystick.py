@@ -51,9 +51,12 @@ class Joystick_MoveGroupe (Joystick):
                           [3.28,0,-1.67,-1.39,0],
                           [2.88,0,-1.45,-1.17,0]]
         
-        self.degre_ouverture_pince_max = 0.8346
+        self.pince_max = 0.8346
         self.degre_ouverture_pince_prev = None
         self.degre_ouverture_pince_prev_prev = None
+        
+        self.base_max = 6.35
+        self.poignet_max = 6.35
         
         self.pose_prev = [None, None, None]
         
@@ -114,12 +117,20 @@ class Joystick_MoveGroupe (Joystick):
             verin_value[0] = -0.15
             self.move_group_hand.go(verin_value, wait=True)
             self.printGreen("verin out done")
-            
+        
     def poignetMove(self):
         if self.rotation_pince_vitesse != 0:
             self.move_group_arm.stop()
             current_joints = self.move_group_arm.get_current_joint_values()
             current_joints[-1] += self.rotation_pince_vitesse * self.scale_rotation
+            # limit min
+            if current_joints[-1] < 0:
+                current_joints[-1] = 0
+                self.printYellow("poignet min", end='\r')
+            # limit max
+            if current_joints[-1] > self.poignet_max:
+                current_joints[-1] = self.poignet_max
+                self.printYellow("poignet max", end='\r')
             self.move_group_arm.go(current_joints, wait=True)
         
     def baseMove(self):
@@ -127,12 +138,21 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.stop()
             current_joints = self.move_group_arm.get_current_joint_values()
             current_joints[0] += self.rotation_base_vitesse * self.scale_rotation
+            # limit min
+            if current_joints[0] < 0:
+                current_joints[0] = 0
+                self.printYellow("base min", end='\r')
+            # limit max
+            if current_joints[0] > self.base_max:
+                current_joints[0] = self.base_max
+                self.printYellow("base max", end='\r')
             self.move_group_arm.go(current_joints, wait=True)
     
     def pinceMove(self):
+        # TODO go with collision
         if (self.degre_ouverture_pince_prev_prev != self.degre_ouverture_pince_prev
             and self.degre_ouverture_pince_prev == self.degre_ouverture_pince):
-            joint_to_go = [False, self.degre_ouverture_pince*self.degre_ouverture_pince_max]
+            joint_to_go = [False, self.degre_ouverture_pince*self.pince_max]
             self.handMove(joint_to_go, wait=True, abs=True)
             
         self.degre_ouverture_pince_prev_prev = self.degre_ouverture_pince_prev

@@ -326,8 +326,8 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
         Robot Alpha: 1
-        Show Robot Collision: true
-        Show Robot Visual: false
+        Show Robot Collision: false
+        Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 0.1
   Enabled: true
@@ -362,9 +362,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.17999963462352753
+      Pitch: 0.5399996638298035
       Target Frame: world
-      Yaw: 4.7449493408203125
+      Yaw: 4.694949626922607
     Saved: ~
 Window Geometry:
   Displays:
