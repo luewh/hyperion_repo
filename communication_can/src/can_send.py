@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Ce script Python permet de contrôler des joints robotiques en utilisant un bus CAN pour la communication entre les différents composants du robot. Le script s'abonne à un topic ROS pour recevoir les états des joints, puis envoie ces données sur le bus CAN pour le contrôle des différents composants.
 
@@ -16,7 +18,8 @@ import struct
 import os
 import threading
 import rospy
-from sensor_msgs.msg import JointState, Bool
+from sensor_msgs.msg import JointState
+from std_msgs.msg import Bool
 
 os.system('sudo ip link set can0 up type can bitrate 500000')
 
