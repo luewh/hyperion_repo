@@ -91,7 +91,7 @@ class Subscriber() :
         self.IHM.frame_input.labelPrlmt3.configure( text = self.listPrelevEtat[data.data],
                                                     fg_color= self.listCoulEtatPrelev[data.data])        
         
-    def CallbackMajPosDem(self,data): # A VALIDER
+    def CallbackMajPosDem(self,data): # OK
         self.IHM.frame_input.labelAxe1Demandee.configure(text = "Axe 1 : " + str("{:.2f}".format((180/math.pi)*float(self.MiseAFormatPosition(data.position[3])))) + " °")
         self.IHM.frame_input.labelAxe2Demandee.configure(text = "Axe 2 : " + str("{:.2f}".format((abs(float(self.MiseAFormatPosition(data.position[4]))))*1000)) + " mm")
         self.IHM.frame_input.labelAxe3Demandee.configure(text = "Axe 3 : " + str("{:.2f}".format((180/math.pi)*float(self.MiseAFormatPosition(data.position[5])))) + " °")
@@ -106,25 +106,12 @@ class Subscriber() :
         self.IHM.frame_input.labelAxe5Reel.configure(text = "Axe 5 : " + self.MiseAFormatPosition(data.data[7])+ " mm")
         
 
-    def CallbackMajTCP_X(self,data): #OK
+    def CallbackMajTCP(self,data): # A VALIDER
         Pos = self.MiseAFormatPosition(data.data)
         self.IHM.frame_input.labelPosXCart.configure(text = "Position X : " + Pos)
-        print ("callback maj tcp x")
-    
-    def CallbackMajTCP_Y(self,data): #OK
-        Pos = self.MiseAFormatPosition(data.data)
         self.IHM.frame_input.labelPosYCart.configure(text = "Position Y : " + Pos)
-        print ("callback maj tcp y")
-        
-    def CallbackMajTCP_Z(self,data): #OK
-        Pos = self.MiseAFormatPosition(data.data)
         self.IHM.frame_input.labelPosZCart.configure(text = "Position Z : " + Pos)
-        print ("callback maj tcp z")
-        
-    def CallbackMajTCP_RotZ(self,data): #OK
-        Pos = self.MiseAFormatPosition(data.data)
         self.IHM.frame_input.labelRotZCart.configure(text = "Rotation Z : " + Pos)
-        print ("callback maj tcp rot z")
         
     def CallbackMajPompePeristaltique(self,data): #OK
         if data.data == 1:
