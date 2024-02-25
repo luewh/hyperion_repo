@@ -46,8 +46,11 @@ class Joystick():
         self.rotation_base_vitesse = 0
         self.rotation_base_vitesse_threshold = 0.4
 
-        self.degre_ouverture_pince = round((self.thustmaster.get_axis(3)+1)/2,self.effecteur_x_y_and_pince_sensibilite)
-
+        try:
+            self.degre_ouverture_pince = round((self.thustmaster.get_axis(3)+1)/2,self.effecteur_x_y_and_pince_sensibilite)
+        except:
+            self.degre_ouverture_pince = None
+        
         # TODO pub init
     
     def joystickUpdate(self):

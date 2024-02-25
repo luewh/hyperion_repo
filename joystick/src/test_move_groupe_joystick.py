@@ -4,6 +4,8 @@ import rospy
 import moveit_commander
 
 from std_msgs.msg import Bool
+from visualization_msgs.msg import Marker
+from geometry_msgs.msg import Quaternion, Pose, Point
 
 import sys
 import copy
@@ -22,20 +24,18 @@ class Joystick_MoveGroupe (Joystick):
                  scale_pos=1.0,
                  scale_rotation=1.0,
                  sleepTime=0.1) -> None:
+        
+        # init joystick
         super().__init__(sleepTime=sleepTime,keyboard=False)
 
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node("move_group_hyperion",
-                        anonymous=True,
+                        anonymous=False,
                         log_level=1,
                         disable_rostime=True,
                         disable_rosout=True)
 
-        """Provides information such as the robot’s kinematic 
-        model and the robot’s current joint states"""
         self.robot = moveit_commander.RobotCommander()
-
-        """This object is an interface to a planning group of joints"""
         group_name_arm = "scara_arm"
         self.move_group_arm = moveit_commander.MoveGroupCommander(group_name_arm)
         group_name_hand = "scara_hand"
@@ -61,10 +61,27 @@ class Joystick_MoveGroupe (Joystick):
         
         self.pose_prev = [None, None, None]
         
+        # home init
         self.macro_position_zero_prev = None
         self.homeDone = None
         self.home_pub = rospy.Publisher('/home', Bool, queue_size=1)
         rospy.Subscriber('/home', Bool, self.homeCallback)
+        
+        # tcp init
+        tcp_marker_points_lenght = 20
+        self.tcp_pub = rospy.Publisher('/tcp', Marker, queue_size = tcp_marker_points_lenght)
+        self.tcp_marker = Marker()
+        self.tcp_marker.header.frame_id = "world"
+        self.tcp_marker.type = Marker.POINTS
+        self.tcp_marker.action = Marker.ADD
+        self.tcp_marker.lifetime = rospy.Duration(0)
+        self.tcp_marker.color.a = 0.8
+        self.tcp_marker.color.b = 1.0
+        self.tcp_marker.scale.x = 0.02
+        self.tcp_marker.scale.y = 0.02
+        self.tcp_marker.scale.z = 0.02
+        self.tcp_marker.pose.orientation = Quaternion(0,0,0,1)
+        self.tcp_marker.points = [Point(0,0,0)]*tcp_marker_points_lenght
         
         
         
@@ -339,6 +356,12 @@ class Joystick_MoveGroupe (Joystick):
         if not home.data:
             self.printGreen("Physical home done")
             self.homeDone = True
+    
+    def tcpUpdate(self):
+        toolCenterPoint = self.move_group_arm.get_current_pose().pose.position
+        toolCenterPoint.z += -0.085 -0.025 -0.07176
+        self.tcp_marker.points = self.tcp_marker.points[1:] + [toolCenterPoint]
+        self.tcp_pub.publish(self.tcp_marker)
             
     # movement control loop
     def run(self):
@@ -357,6 +380,9 @@ class Joystick_MoveGroupe (Joystick):
                 self.preleve()
                 self.stock()
                 self.home()
+                
+                self.tcpUpdate()
+                
                 # TODO pub lum cam modePre
                 sleep(self.sleepTime)
             except KeyboardInterrupt:

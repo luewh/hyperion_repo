@@ -48,7 +48,7 @@ def imPub(camera_path,camera_topic,hz):
 
 if __name__ == '__main__':
     # integrated camera on vmBox
-    camera_path = "/dev/v4l/by-path/pci-0000:00:06.0-usb-0:3:1.0-video-index0"
+    camera_path = "/dev/v4l/by-path/pci-0000:00:06.0-usb-0:2:1.0-video-index0"
     camera_topic = "vision_globale"
     hz = 10
     try:
