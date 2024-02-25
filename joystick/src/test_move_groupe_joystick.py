@@ -9,6 +9,7 @@ from geometry_msgs.msg import Quaternion, Pose, Point
 
 import sys
 import copy
+import math
 from time import sleep
 from threading import Thread, Event
 
@@ -36,8 +37,11 @@ class Joystick_MoveGroupe (Joystick):
                         disable_rosout=True)
 
         self.robot = moveit_commander.RobotCommander()
+        
         group_name_arm = "scara_arm"
         self.move_group_arm = moveit_commander.MoveGroupCommander(group_name_arm)
+        self.move_group_arm.go([0,0,0,0], wait=True)
+        
         group_name_hand = "scara_hand"
         self.move_group_hand = moveit_commander.MoveGroupCommander(group_name_hand)
         
@@ -68,7 +72,7 @@ class Joystick_MoveGroupe (Joystick):
         rospy.Subscriber('/home', Bool, self.homeCallback)
         
         # tcp init
-        tcp_marker_points_lenght = 20
+        tcp_marker_points_lenght = 10
         self.tcp_pub = rospy.Publisher('/tcp', Marker, queue_size = tcp_marker_points_lenght)
         self.tcp_marker = Marker()
         self.tcp_marker.header.frame_id = "world"
@@ -77,12 +81,11 @@ class Joystick_MoveGroupe (Joystick):
         self.tcp_marker.lifetime = rospy.Duration(0)
         self.tcp_marker.color.a = 0.8
         self.tcp_marker.color.b = 1.0
-        self.tcp_marker.scale.x = 0.02
-        self.tcp_marker.scale.y = 0.02
-        self.tcp_marker.scale.z = 0.02
+        self.tcp_marker.scale.x = 0.01
+        self.tcp_marker.scale.y = 0.01
+        self.tcp_marker.scale.z = 0.01
         self.tcp_marker.pose.orientation = Quaternion(0,0,0,1)
         self.tcp_marker.points = [Point(0,0,0)]*tcp_marker_points_lenght
-        
         
         
     def printRed(self,text, end='\r\n'):
@@ -358,8 +361,10 @@ class Joystick_MoveGroupe (Joystick):
             self.homeDone = True
     
     def tcpUpdate(self):
+        doigt_angles = self.move_group_hand.get_current_joint_values()[1]
+        doigt_angles -= 0.40387
         toolCenterPoint = self.move_group_arm.get_current_pose().pose.position
-        toolCenterPoint.z += -0.085 -0.025 -0.07176
+        toolCenterPoint.z += -0.085 -0.025 -0.072 -math.cos(doigt_angles)*0.11509
         self.tcp_marker.points = self.tcp_marker.points[1:] + [toolCenterPoint]
         self.tcp_pub.publish(self.tcp_marker)
             
@@ -381,6 +386,7 @@ class Joystick_MoveGroupe (Joystick):
                 self.stock()
                 self.home()
                 
+                # to be seperated into another node
                 self.tcpUpdate()
                 
                 # TODO pub lum cam modePre
