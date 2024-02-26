@@ -42,11 +42,13 @@ class Joystick_MoveGroupe (Joystick):
         
         group_name_arm = "scara_arm"
         self.move_group_arm = moveit_commander.MoveGroupCommander(group_name_arm)
+        self.printYellow("Doing home...", end='')
         self.move_group_arm.go([0,0,0,0], wait=True)
         
         group_name_hand = "scara_hand"
         self.move_group_hand = moveit_commander.MoveGroupCommander(group_name_hand)
         self.move_group_hand.go([0,0], wait=True)
+        self.printGreen("done",end='')
         
         self.scale_pos = scale_pos
         self.scale_rotation = scale_rotation
@@ -55,9 +57,9 @@ class Joystick_MoveGroupe (Joystick):
                            [2.44,0,4.64,2.80],
                            [2.04,0,4.44,2.60]]
         
-        self.stockPose = [[2.01,0,4.01,3.51],
-                          [2.44,0,4.22,3.73],
-                          [2.79,0,4.24,4.06]]
+        self.stockPose = [[2.01,0,4.01,3.71],
+                          [2.44,0,4.22,4.03],
+                          [2.79,0,4.24,4.26]]
         
         self.pince_max = 0.8346
         self.degre_ouverture_pince_prev = None
@@ -66,7 +68,7 @@ class Joystick_MoveGroupe (Joystick):
         self.base_max = 6.35
         self.poignet_max = 6.35
         
-        self.pose_prev = [None, None, None]
+        self.poseCommand_prev = [None, None, None]
         
         # home init
         self.macro_position_zero_prev = None
@@ -95,29 +97,30 @@ class Joystick_MoveGroupe (Joystick):
         
         
     def printRed(self,text, end='\r\n'):
-        print(" "*120, end='\r')
+        if end=='\r':
+            print(" "*120, end='\r')
         print("{}{}{}".format('\033[91m',text,'\033[0m'), end=end)
     
     def printGreen(self,text, end='\r\n'):
-        print(" "*120, end='\r')
+        # print(" "*120, end='\r')
         print("{}{}{}".format('\033[92m',text,'\033[0m'), end=end)
     
     def printYellow(self,text, end='\r\n'):
-        print(" "*120, end='\r')
+        # print(" "*120, end='\r')
         print("{}{}{}".format('\033[93m',text,'\033[0m'), end=end)
     
-    def armMove (self,pose,wait=False):
-        if pose == [0,0,0]:
-            if self.pose_prev != [0,0,0]:
+    def armMove (self,poseCommand,wait=False):
+        if poseCommand == [0,0,0]:
+            if self.poseCommand_prev != [0,0,0]:
                 self.move_group_arm.stop()
             return
         
         self.move_group_arm.stop()
         waypoints = []
         wpose = self.move_group_arm.get_current_pose().pose
-        wpose.position.x += self.scale_pos * pose[0]
-        wpose.position.y += self.scale_pos * pose[1]
-        wpose.position.z += self.scale_pos * pose[2]
+        wpose.position.x += self.scale_pos * poseCommand[0]
+        wpose.position.y += self.scale_pos * poseCommand[1]
+        wpose.position.z += self.scale_pos * poseCommand[2]
         waypoints.append(copy.deepcopy(wpose))
         
         (plan, fraction) = self.move_group_arm.compute_cartesian_path(
@@ -130,12 +133,12 @@ class Joystick_MoveGroupe (Joystick):
         colonne_value = self.move_group_arm.get_current_joint_values()
         verin_value = self.move_group_hand.get_current_joint_values()
         # if colonne at top and verin not at top
-        if (colonne_value[1] + self.scale_pos * pose[2] > 0) and (round(verin_value[0],2) != 0):
+        if (colonne_value[1] + self.scale_pos * poseCommand[2] > 0) and (round(verin_value[0],2) != 0):
             # TODO pub verin action
             self.move_group_arm.stop()
             # verin got to top
             verin_value[0] = 0
-            self.printYellow("please wait...")
+            self.printYellow("Please wait...",end='')
             self.move_group_hand.go(verin_value, wait=True)
             # colonne down verin length
             colonne_value[1] -= 0.15
@@ -143,12 +146,12 @@ class Joystick_MoveGroupe (Joystick):
             self.printGreen("verin in done")
             
         # if colonne at bottom and verin not at bottom
-        if (colonne_value[1] + self.scale_pos * pose[2] < -0.285) and (round(verin_value[0],2) != -0.15):
+        if (colonne_value[1] + self.scale_pos * poseCommand[2] < -0.285) and (round(verin_value[0],2) != -0.15):
             # TODO pub verin action
             self.move_group_arm.stop()
             # colonne up verin length
             colonne_value[1] += 0.15
-            self.printYellow("please wait...")
+            self.printYellow("Please wait...",end='')
             self.move_group_arm.go(colonne_value, wait=True)
             # verin got to bottom
             verin_value[0] = -0.15
@@ -199,7 +202,7 @@ class Joystick_MoveGroupe (Joystick):
         current_joints = self.move_group_hand.get_current_joint_values()
         # joint assert
         if len(current_joints) != len(joints):
-            self.printRed("Wrong length")
+            self.printRed("Wrong length for self.handMove()")
             return
         # stop hand move
         self.move_group_hand.stop()
@@ -289,7 +292,7 @@ class Joystick_MoveGroupe (Joystick):
         
         # preleve number changed during pick
         if moveTask.is_alive():
-            self.printRed("aborted preleve {}".format(numberPreleve))
+            self.printRed("Aborted preleve {}".format(numberPreleve))
             # end thread
             event.set()  
             self.move_group_arm.stop()
@@ -299,7 +302,7 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.go(current_joints, wait=True)
         # pick drop thread end properly
         else:
-            self.printYellow("finished, please release the button...", end="\r")
+            self.printYellow("Finished, please release the button...", end="")
             # wait till preleve button released
             while self.prelevement_1_2_3 != 0:
                 self.joystickUpdate()
@@ -328,7 +331,7 @@ class Joystick_MoveGroupe (Joystick):
         
         # preleve number changed during drop
         if dropTask.is_alive():
-            self.printRed("aborted stock {}".format(numberStock))
+            self.printRed("Aborted stock {}".format(numberStock))
             # end thread
             event.set()  
             self.move_group_arm.stop()
@@ -338,7 +341,7 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.go(current_joints, wait=True)
         # pick drop thread end properly
         else:
-            self.printYellow("finished, please release the button...", end="\r")
+            self.printYellow("Finished, please release the button...", end="")
             # wait till preleve button released
             while self.macro_stockage_1_2_3 != 0:
                 self.joystickUpdate()
@@ -356,14 +359,14 @@ class Joystick_MoveGroupe (Joystick):
             # waiting physical scara home done
             self.homeDone = False
             while not self.homeDone:
-                self.printYellow("Waiting physical home to be done...", end='\r')
+                self.printYellow("Waiting physical home to be done...", end='')
                 self.rate.sleep()
             
         self.macro_position_zero_prev = self.macro_position_zero
             
     def homeCallback(self, home):
         if not home.data:
-            self.printGreen("Physical home done")
+            self.printGreen("physical home done")
             self.homeDone = True
     
     def tcpUpdate(self):
@@ -386,9 +389,9 @@ class Joystick_MoveGroupe (Joystick):
                 self.baseMove()
                 self.pinceMove()
                 # arm movement, wait=False
-                pose = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
-                self.armMove(pose, wait=False)
-                self.pose_prev = pose
+                poseCommand = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
+                self.armMove(poseCommand, wait=False)
+                self.poseCommand_prev = poseCommand
                 # macro movement, wait=True
                 self.preleve()
                 self.stock()
