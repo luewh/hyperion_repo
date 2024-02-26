@@ -6,6 +6,7 @@ import struct
 import os
 import threading
 import rospy
+import numpy as np
 from std_msgs.msg import Bool, Float32MultiArray
 
 os.system('sudo ip link set can0 up type can bitrate 500000')
@@ -27,6 +28,7 @@ Adresse_Home_Fait = 4
 Adresse_Verin_Fait = 6
 
 Data = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]] # [Angle_Reel, Home_Fait, Verin_Fait]
+Data_Angle = [0,0,0,0,0,0]
 
 def Receive_CAN(adress):
     message = bus.recv()
@@ -60,13 +62,17 @@ def Test_Home_Fait():
 def publisher():
     rospy.init_node('can_data_publisher', anonymous=True)
     pub_home = rospy.Publisher('/home', Bool, queue_size=10)
-    #pub_angle = rospy.Publisher('IHM/moteurs/retours_positions', Float32MultiArray, queue_size=10) A TESTER
+    pub_angle = rospy.Publisher('IHM/moteurs/retours_positions', Float32MultiArray, queue_size=1)
     
     rate = rospy.Rate(10)  # 10hz
     while not rospy.is_shutdown():
         if Test_Home_Fait() == True:
             pub_home.publish(False)
-        #pub_angle.publish(Data[0])
+        msg = Float32MultiArray()
+        for Axe in range(len(Data)):
+            Data_Angle[Axe] = Data[Axe][0]
+        msg.data = np.array(Data_Angle).flatten().tolist()
+        pub_angle.publish(msg)
         rate.sleep()
 
 thread_reception = threading.Thread(target=Thread_Reception)

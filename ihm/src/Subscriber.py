@@ -43,10 +43,7 @@ class Subscriber() :
         rospy.Subscriber("IHM/moteurs/retours_positions", Float32MultiArray, self.CallbackMajPosRet)
         
         #subscriber position cartésienne
-        rospy.Subscriber("IHM/PositionRobot/PosX_TCP", Float32, self.CallbackMajTCP_X)
-        rospy.Subscriber("IHM/PositionRobot/PosY_TCP", Float32, self.CallbackMajTCP_Y)
-        rospy.Subscriber("IHM/PositionRobot/PosZ_TCP", Float32, self.CallbackMajTCP_Z)
-        rospy.Subscriber("IHM/PositionRobot/RotZ_TCP", Float32, self.CallbackMajTCP_RotZ)  
+        rospy.Subscriber("IHM/PositionRobot/Pos", Float32, self.CallbackMajTCP)
 
         #subscriber pompe peristaltique
         rospy.Subscriber("IHM/moteurs/pompe_peristaltique/RotMotPompePeriEtat", Int16, self.CallbackMajPompePeristaltique)
