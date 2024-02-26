@@ -1,8 +1,12 @@
+#!/usr/bin/env python
+
 import can
 import time
 import struct
 import os
 import threading
+import rospy
+from std_msgs.msg import Bool, Float32MultiArray
 
 os.system('sudo ip link set can0 up type can bitrate 500000')
 
@@ -22,18 +26,7 @@ Adresse_Angle_Reel = 2
 Adresse_Home_Fait = 4
 Adresse_Verin_Fait = 6
 
-# Angle_Reel = 0
-# Home_Fait = 0
-# Verin_Fait = 0
-
 Data = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]] # [Angle_Reel, Home_Fait, Verin_Fait]
-DernierDataEnvoye = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-
-startTime = time.monotonic()
-
-def Send_CAN(id, data):
-    message = can.Message(arbitration_id=id, data=data, is_extended_id=False)
-    return bus.send(message)
 
 def Receive_CAN(adress):
     message = bus.recv()
@@ -43,25 +36,42 @@ def Receive_CAN(adress):
         return None
 
 def Reception():
-    while True:
-        message = bus.recv()
-        for i in range(0,5):
-            if message.arbitration_id == 100 + 10 * (i+1) + Adresse_Angle_Reel:
-                Data[i][0]=struct.unpack('f', message.data)[0]
-            elif message.arbitration_id == 100 + 10 * (i+1) + Adresse_Home_Fait:
-                Data[i][1]=struct.unpack('f', message.data)[0]
-            elif message.arbitration_id == 100 + 10 * (i+1) + Adresse_Verin_Fait:
-                Data[i][2]=struct.unpack('f', message.data)[0]
+    message = bus.recv()
+    for i in range(0,5):
+        if message.arbitration_id == 100 + 10 * (i+1) + Adresse_Angle_Reel:
+            Data[i][0]=struct.unpack('f', message.data)[0]
+        elif message.arbitration_id == 100 + 10 * (i+1) + Adresse_Home_Fait:
+            Data[i][1]=struct.unpack('f', message.data)[0]
+        elif message.arbitration_id == 100 + 10 * (i+1) + Adresse_Verin_Fait:
+            Data[i][2]=struct.unpack('f', message.data)[0]
         time.sleep(0.01)
 
-def Thread_Debug():
+def Thread_Reception():
     while True:
-        for i in range(0,5):
-            print("Reception uStepper ID : " + str(i+1) + " | Angle reel : " + str(Data[i][0]) + " | Home fait : " + str(Data[i][1]) + " | Verin fait : " + str(Data[i][2]))
-        print("------------------------------------------------------------------------------------------------------------------------")
-        time.sleep(0.5)
+        Reception()
+        time.sleep(0.05)
 
-thread_debug = threading.Thread(target=Thread_Debug)
-thread_debug.start()
+def Test_Home_Fait():
+    for EachMotor in Data:
+        if EachMotor[1] == 0:
+            return False
+    return True
 
-Reception()
+def publisher():
+    rospy.init_node('can_data_publisher', anonymous=True)
+    pub_home = rospy.Publisher('/home', Bool, queue_size=10)
+    #pub_angle = rospy.Publisher('IHM/moteurs/retours_positions', Float32MultiArray, queue_size=10) A TESTER
+    
+    rate = rospy.Rate(10)  # 10hz
+    while not rospy.is_shutdown():
+        if Test_Home_Fait() == True:
+            pub_home.publish(False)
+        #pub_angle.publish(Data[0])
+        rate.sleep()
+
+thread_reception = threading.Thread(target=Thread_Reception)
+thread_reception.daemon = True #permet l'arret du code avec CTRL C
+thread_reception.start()
+
+if __name__ == '__main__':
+    publisher()
