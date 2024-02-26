@@ -7,7 +7,7 @@ class Joystick():
     def __init__(self,sleepTime=0.04,keyboard=False) -> None:
         
         self.sleepTime = sleepTime
-        self.keboard = keyboard
+        self.keyboard = keyboard
         
         pygame.joystick.init()
         
@@ -18,7 +18,7 @@ class Joystick():
             
         pygame.init()
         
-        if self.keboard:
+        if self.keyboard:
             window = pygame.display.set_mode((300, 300))
             rect = pygame.Rect(0, 0, 20, 20)
             rect.center = window.get_rect().center

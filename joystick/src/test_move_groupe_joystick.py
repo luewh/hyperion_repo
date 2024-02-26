@@ -10,7 +10,7 @@ from geometry_msgs.msg import Quaternion, Pose, Point
 import sys
 import copy
 import math
-from time import sleep
+# from time import sleep
 from threading import Thread, Event
 
 from joystick import Joystick
@@ -35,6 +35,8 @@ class Joystick_MoveGroupe (Joystick):
                         log_level=1,
                         disable_rostime=True,
                         disable_rosout=True)
+        
+        self.rate = rospy.Rate(1/self.sleepTime)
 
         self.robot = moveit_commander.RobotCommander()
         
@@ -44,6 +46,7 @@ class Joystick_MoveGroupe (Joystick):
         
         group_name_hand = "scara_hand"
         self.move_group_hand = moveit_commander.MoveGroupCommander(group_name_hand)
+        self.move_group_hand.go([0,0], wait=True)
         
         self.scale_pos = scale_pos
         self.scale_rotation = scale_rotation
@@ -86,6 +89,9 @@ class Joystick_MoveGroupe (Joystick):
         self.tcp_marker.scale.z = 0.01
         self.tcp_marker.pose.orientation = Quaternion(0,0,0,1)
         self.tcp_marker.points = [Point(0,0,0)]*tcp_marker_points_lenght
+        # tcp run thread
+        tcpTask = Thread(target=self.tcpUpdate)
+        tcpTask.start()
         
         
     def printRed(self,text, end='\r\n'):
@@ -279,7 +285,7 @@ class Joystick_MoveGroupe (Joystick):
         # and pick thread not end
         while self.prelevement_1_2_3 == numberPreleve and moveTask.is_alive():
             self.joystickUpdate()
-            sleep(self.sleepTime)
+            self.rate.sleep()
         
         # preleve number changed during pick
         if moveTask.is_alive():
@@ -297,7 +303,7 @@ class Joystick_MoveGroupe (Joystick):
             # wait till preleve button released
             while self.prelevement_1_2_3 != 0:
                 self.joystickUpdate()
-                sleep(self.sleepTime)
+                self.rate.sleep()
             self.printGreen("preleve {} done".format(numberPreleve))
     
     def stock(self):
@@ -318,7 +324,7 @@ class Joystick_MoveGroupe (Joystick):
         # and drop thread not end
         while self.macro_stockage_1_2_3 == numberStock and dropTask.is_alive():
             self.joystickUpdate()
-            sleep(self.sleepTime)
+            self.rate.sleep()
         
         # preleve number changed during drop
         if dropTask.is_alive():
@@ -336,7 +342,7 @@ class Joystick_MoveGroupe (Joystick):
             # wait till preleve button released
             while self.macro_stockage_1_2_3 != 0:
                 self.joystickUpdate()
-                sleep(self.sleepTime)
+                self.rate.sleep()
             self.printGreen("stock {} done".format(numberStock))
     
     def home(self):
@@ -351,7 +357,7 @@ class Joystick_MoveGroupe (Joystick):
             self.homeDone = False
             while not self.homeDone:
                 self.printYellow("Waiting physical home to be done...", end='\r')
-                sleep(self.sleepTime)
+                self.rate.sleep()
             
         self.macro_position_zero_prev = self.macro_position_zero
             
@@ -361,12 +367,14 @@ class Joystick_MoveGroupe (Joystick):
             self.homeDone = True
     
     def tcpUpdate(self):
-        doigt_angles = self.move_group_hand.get_current_joint_values()[1]
-        doigt_angles -= 0.40387
-        toolCenterPoint = self.move_group_arm.get_current_pose().pose.position
-        toolCenterPoint.z += -0.085 -0.025 -0.072 -math.cos(doigt_angles)*0.11509
-        self.tcp_marker.points = self.tcp_marker.points[1:] + [toolCenterPoint]
-        self.tcp_pub.publish(self.tcp_marker)
+        while True:
+            verinPos, doigtAngles = self.move_group_hand.get_current_joint_values()
+            doigtAngles -= 0.40387
+            toolCenterPoint = self.move_group_arm.get_current_pose().pose.position
+            toolCenterPoint.z += -0.085 -0.025 -0.072 -math.cos(doigtAngles)*0.11509 +verinPos
+            self.tcp_marker.points = self.tcp_marker.points[1:] + [toolCenterPoint]
+            self.tcp_pub.publish(self.tcp_marker)
+            self.rate.sleep()
             
     # movement control loop
     def run(self):
@@ -386,11 +394,8 @@ class Joystick_MoveGroupe (Joystick):
                 self.stock()
                 self.home()
                 
-                # to be seperated into another node
-                self.tcpUpdate()
-                
                 # TODO pub lum cam modePre
-                sleep(self.sleepTime)
+                self.rate.sleep()
             except KeyboardInterrupt:
                 self.printRed("Exiting...")
         
