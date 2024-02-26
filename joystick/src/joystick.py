@@ -14,7 +14,7 @@ class Joystick():
         try:
             self.thustmaster = pygame.joystick.Joystick(0)
         except:
-            print("no joystick avalable")
+            print("---\nno joystick avalable\n---")
             
         pygame.init()
         

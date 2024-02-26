@@ -397,7 +397,7 @@
         <parent link="interne"/>
         <child link="externe"/>
         <axis xyz="0.0 0.0 -1.0"/>
-        <limit lower="0.0" upper="4.66" effort="0.0" velocity="0.0"/>
+        <limit lower="0.0" upper="4.60" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="externe_poignet" type="revolute">
