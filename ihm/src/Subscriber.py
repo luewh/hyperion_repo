@@ -43,10 +43,7 @@ class Subscriber() :
         rospy.Subscriber("IHM/moteurs/retours_positions", Float32MultiArray, self.CallbackMajPosRet)
         
         #subscriber position cartésienne
-        rospy.Subscriber("IHM/PositionRobot/PosX_TCP", Float32, self.CallbackMajTCP_X)
-        rospy.Subscriber("IHM/PositionRobot/PosY_TCP", Float32, self.CallbackMajTCP_Y)
-        rospy.Subscriber("IHM/PositionRobot/PosZ_TCP", Float32, self.CallbackMajTCP_Z)
-        rospy.Subscriber("IHM/PositionRobot/RotZ_TCP", Float32, self.CallbackMajTCP_RotZ)  
+        rospy.Subscriber("IHM/PositionRobot/Pos", Float32, self.CallbackMajTCP)
 
         #subscriber pompe peristaltique
         rospy.Subscriber("IHM/moteurs/pompe_peristaltique/RotMotPompePeriEtat", Int16, self.CallbackMajPompePeristaltique)
@@ -93,17 +90,17 @@ class Subscriber() :
         
     def CallbackMajPosDem(self,data): # OK
         self.IHM.frame_input.labelAxe1Demandee.configure(text = "Axe 1 : " + str("{:.2f}".format((180/math.pi)*float(self.MiseAFormatPosition(data.position[3])))) + " °")
-        self.IHM.frame_input.labelAxe2Demandee.configure(text = "Axe 2 : " + str("{:.2f}".format((abs(float(self.MiseAFormatPosition(data.position[4]))))*1000)) + " mm")
+        self.IHM.frame_input.labelAxe2Demandee.configure(text = "Axe 2 : " + str("{:.2f}".format(300-(abs(float(self.MiseAFormatPosition(data.position[4]))))*1000)) + " mm")
         self.IHM.frame_input.labelAxe3Demandee.configure(text = "Axe 3 : " + str("{:.2f}".format((180/math.pi)*float(self.MiseAFormatPosition(data.position[5])))) + " °")
         self.IHM.frame_input.labelAxe4Demandee.configure(text = "Axe 4 : " + str("{:.2f}".format((180/math.pi)*float(self.MiseAFormatPosition(data.position[6])))) + " °")
         self.IHM.frame_input.labelAxe5Demandee.configure(text = "Axe 5 : " + str("{:.2f}".format(float(self.MiseAFormatPosition(data.position[8]))*1000) + " mm"))
 
     def CallbackMajPosRet(self,data): # A VALIDER
-        self.IHM.frame_input.labelAxe1Reel.configure(text = "Axe 1 : " + self.MiseAFormatPosition(data.data[3])+ " °")
-        self.IHM.frame_input.labelAxe2Reel.configure(text = "Axe 2 : " + self.MiseAFormatPosition(data.data[4])+ " mm")
-        self.IHM.frame_input.labelAxe3Reel.configure(text = "Axe 3 : " + self.MiseAFormatPosition(data.data[5])+ " °")
-        self.IHM.frame_input.labelAxe4Reel.configure(text = "Axe 4 : " + self.MiseAFormatPosition(data.data[6])+ " °")
-        self.IHM.frame_input.labelAxe5Reel.configure(text = "Axe 5 : " + self.MiseAFormatPosition(data.data[7])+ " mm")
+        self.IHM.frame_input.labelAxe1Reel.configure(text = "Axe 1 : " + self.MiseAFormatPosition(data.data[0])+ " °")
+        self.IHM.frame_input.labelAxe2Reel.configure(text = "Axe 2 : " + self.MiseAFormatPosition(data.data[1])+ " mm")
+        self.IHM.frame_input.labelAxe3Reel.configure(text = "Axe 3 : " + self.MiseAFormatPosition(data.data[2])+ " °")
+        self.IHM.frame_input.labelAxe4Reel.configure(text = "Axe 4 : " + self.MiseAFormatPosition(data.data[3])+ " °")
+        self.IHM.frame_input.labelAxe5Reel.configure(text = "Axe 5 : " + self.MiseAFormatPosition(data.data[4])+ " mm")
         
 
     def CallbackMajTCP(self,data): # A VALIDER

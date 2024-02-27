@@ -6,9 +6,8 @@ import struct
 import os
 import threading
 import rospy
+import numpy as np
 from std_msgs.msg import Bool, Float32MultiArray
-
-os.system('sudo ip link set can0 up type can bitrate 500000')
 
 # Configuration du bus CAN
 can_interface = 'can0'  # Nom de l'interface CAN
@@ -27,13 +26,16 @@ Adresse_Home_Fait = 4
 Adresse_Verin_Fait = 6
 
 Data = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]] # [Angle_Reel, Home_Fait, Verin_Fait]
+Data_Angle = [0,0,0,0,0,0]
 
 def Receive_CAN(adress):
     message = bus.recv()
     if message.arbitration_id == adress:
         return struct.unpack('f', message.data)[0]
-    else : 
+    else :
         return None
+    
+ValidationHome = True
 
 def Reception():
     message = bus.recv()
@@ -45,28 +47,39 @@ def Reception():
         elif message.arbitration_id == 100 + 10 * (i+1) + Adresse_Verin_Fait:
             Data[i][2]=struct.unpack('f', message.data)[0]
         time.sleep(0.01)
+    Data_prev = Data
 
 def Thread_Reception():
     while True:
         Reception()
-        time.sleep(0.05)
 
 def Test_Home_Fait():
-    for EachMotor in Data:
-        if EachMotor[1] == 0:
-            return False
-    return True
+    for Moteur in Data:
+        if Moteur[1] == 1:
+            return True
+    return False
+
+def callback(data):
+    global ValidationHome   
+    if data.data:
+        ValidationHome = True
+    else:
+        ValidationHome = False
 
 def publisher():
     rospy.init_node('can_data_publisher', anonymous=True)
     pub_home = rospy.Publisher('/home', Bool, queue_size=10)
-    #pub_angle = rospy.Publisher('IHM/moteurs/retours_positions', Float32MultiArray, queue_size=10) A TESTER
-    
+    pub_angle = rospy.Publisher('IHM/moteurs/retours_positions', Float32MultiArray, queue_size=10)
+    rospy.Subscriber('/home', Bool, callback)
     rate = rospy.Rate(10)  # 10hz
     while not rospy.is_shutdown():
-        if Test_Home_Fait() == True:
+        if Test_Home_Fait() and ValidationHome:
             pub_home.publish(False)
-        #pub_angle.publish(Data[0])
+        msg = Float32MultiArray()
+        for Axe in range(len(Data)):
+            Data_Angle[Axe] = Data[Axe][0]
+        msg.data = np.array(Data_Angle).flatten().tolist()
+        pub_angle.publish(msg)
         rate.sleep()
 
 thread_reception = threading.Thread(target=Thread_Reception)

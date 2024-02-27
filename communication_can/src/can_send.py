@@ -21,6 +21,8 @@ import rospy
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Bool
 
+Autorisation_Home = True
+
 os.system('sudo ip link set can0 up type can bitrate 500000')
 
 # Configuration du bus CAN
@@ -41,21 +43,27 @@ Adresse_Demande_Verin = 5
 
 Data = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]] # [Angle_Demande, Demande_Home, Demande_Verin]
 
+Bloqueur = 0
+
 def callback(data):
-    #rospy.loginfo(data.position)
-    for i in range(5):
-        Data[i][0] = data.position[i+3]
+    #rospy.loginfo(data.position
+    Data[0][0] = data.position[3]
+    Data[1][0] = data.position[4]
+    Data[2][0] = data.position[5]
+    Data[3][0] = data.position[6]
+    Data[4][0] = data.position[8]
 
 def callback_home(data):
     rospy.loginfo("Home demandé : {}".format(data.data))
     for i in range(5):
         Data[i][1] = data.data
+    print(data.data)
 
 def callback_verin(data):
-    rospy.loginfo("Verin demandé : {}".format(data.data))
+    #rospy.loginfo("Verin demandé : {}".format(data.data))
     for i in range(5):
         Data[i][2] = data.data
-
+        
 def Send_CAN(id, data):
     message = can.Message(arbitration_id=id, data=data, is_extended_id=False)
     return bus.send(message)
@@ -76,11 +84,12 @@ def subscriber():
     rospy.init_node('can_send', anonymous=False) #Node name
     rospy.Subscriber("joint_states", JointState, callback) #Name of the publisher to which we subscribe
     rospy.Subscriber("/home", Bool, callback_home)  # Subscribe to /home topic
-    rospy.Subscriber("/verin", Bool, callback_verin)  # Subscribe to /home topic
+    rospy.Subscriber("/verin", Bool, callback_verin)  # Subscribe to /verin topic
     rospy.spin()
 
 thread_envoi = threading.Thread(target=Thread_Envoi)
 thread_envoi.daemon = True #permet l'arret du code avec CTRL C
+
 thread_envoi.start()
 
 if __name__ == '__main__':
