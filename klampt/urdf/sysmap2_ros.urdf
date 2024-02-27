@@ -134,7 +134,22 @@
         <collision>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/5_ZoneElec_only_convexHull.stl"/>
+                <mesh filename="package://klampt/meshes/5_ZoneElec_convexHull.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <link name="electrique_plateau">
+        <visual>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/5_ZoneElec_plateau_optimized.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin rpy="1.57 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://klampt/meshes/5_ZoneElec_plateau_optimized.stl"/>
             </geometry>
         </collision>
     </link>
@@ -149,7 +164,7 @@
         <collision>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/6_ZoneBatterie_convexHull.stl"/>
+                <mesh filename="package://klampt/meshes/6_ZoneBatterie.stl"/>
             </geometry>
         </collision>
     </link>
@@ -364,6 +379,12 @@
         <child link="electrique"/>
     </joint>
 
+    <joint name="platine_electriquePlateau" type="fixed">
+        <origin xyz="-0.1179 -0.004 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="platine"/>
+        <child link="electrique_plateau"/>
+    </joint>
+
     <joint name="platine_batterie" type="fixed">
         <origin xyz="0.110 0.276 0.0" rpy="0.0 0.0 0.0"/>
         <parent link="platine"/>
@@ -389,15 +410,15 @@
         <parent link="colonne"/>
         <child link="interne"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-0.2995" upper="0" effort="0.0" velocity="0.0"/>
+        <limit lower="-0.2789" upper="0" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="interne_externe" type="revolute">
-        <origin xyz="0.214559 0.163904 -0.005" rpy="0.0 0.0 2.56"/>
+        <origin xyz="0.214559 0.163904 -0.005" rpy="0.0 0.0 2.48"/>
         <parent link="interne"/>
         <child link="externe"/>
         <axis xyz="0.0 0.0 -1.0"/>
-        <limit lower="0.0" upper="4.66" effort="0.0" velocity="0.0"/>
+        <limit lower="0.0" upper="4.54" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="externe_poignet" type="revolute">
@@ -409,7 +430,7 @@
     </joint>
 
     <joint name="poignet_verin" type="prismatic">
-        <origin xyz="0.0 0.0 -0.083" rpy="0.0 0.0 0.0"/>
+        <origin xyz="0.0 0.0 -0.049" rpy="0.0 0.0 0.0"/>
         <parent link="poignet"/>
         <child link="verin"/>
         <axis xyz="0.0 0.0 1.0"/>
