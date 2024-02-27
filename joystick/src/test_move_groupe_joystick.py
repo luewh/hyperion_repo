@@ -3,7 +3,7 @@
 import rospy
 import moveit_commander
 
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Int8
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Quaternion, Point
 
@@ -99,6 +99,10 @@ class Joystick_MoveGroupe (Joystick):
         tcpTask = Thread(target=self.tcpUpdate)
         tcpTask.start()
         
+        # init liquide
+        self.liqude_pub = rospy.Publisher('/liquide', Int8, queue_size=1)
+        
+        
         
     def printRed(self,text, end='\r\n'):
         print(" "*120, end='\r')
@@ -149,7 +153,7 @@ class Joystick_MoveGroupe (Joystick):
             self.printGreen("verin in done")
             
         # if colonne at bottom and verin not at bottom
-        if (colonne_value[1] + self.scale_pos * poseCommand[2] < -0.285) and (round(verin_value[0],2) != -0.15):
+        if (colonne_value[1] + self.scale_pos * poseCommand[2] < -0.2789) and (round(verin_value[0],2) != -0.15):
             # TODO pub verin action
             self.move_group_arm.stop()
             # colonne up verin length
@@ -231,55 +235,61 @@ class Joystick_MoveGroupe (Joystick):
         self.move_group_arm.stop()
         self.move_group_hand.stop()
         
-        # if event.is_set():
-        #     return
-        # # verin go top
-        # self.handMove([0, False],wait=True,abs=True)
+        if event.is_set():
+            return
+        # verin go top
+        self.handMove([0, False],wait=True,abs=True)
         
-        # if event.is_set():
-        #     return
-        # # arm go pick/drop pose
-        # self.move_group_arm.go(pickPose, wait=True)
+        if event.is_set():
+            return
+        # arm go pick/drop pose
+        self.move_group_arm.go(pickPose, wait=True)
         
-        # if event.is_set():
-        #     return
-        # if pick:
-        #     # open pince at 22%
-        #     self.handMove([False, 0.22],wait=True,abs=True)
-        # else:
-        #     # no action needed
-        #     pass
+        if event.is_set():
+            return
+        if pick:
+            # open pince at 22%
+            self.handMove([False, 0.22],wait=True,abs=True)
+        else:
+            # no action needed
+            pass
         
-        # if event.is_set():
-        #     return
-        # # arm down cartesian
-        # self.armMove([0,0,-pickDist],wait=True)
+        if event.is_set():
+            return
+        # arm down cartesian
+        self.armMove([0,0,-pickDist],wait=True)
         
-        # if event.is_set():
-        #     return
-        # if pick:
-        #     # close pince
-        #     self.handMove([False, 0],wait=True,abs=True)
-        # else:
-        #     # open pince 5% to release object
-        #     self.handMove([False, 0.05],wait=True,abs=False)
+        if event.is_set():
+            return
+        if pick:
+            # close pince
+            self.handMove([False, 0],wait=True,abs=True)
+        else:
+            # open pince 0.22 rad to release object
+            self.handMove([False, 0.22],wait=True,abs=False)
         
-        # if event.is_set():
-        #     return
-        # # arm up cartesian
-        # self.armMove([0,0,pickDist],wait=True)
+        if event.is_set():
+            return
+        # arm up cartesian
+        self.armMove([0,0,pickDist],wait=True)
         
+        if event.is_set():
+            return
         if not pick:
-            # arm go boite pose 1
-            self.move_group_arm.go(boitePose[0], wait=True)
+            # close pince
+            self.handMove([False, 0],wait=True,abs=True)
             
-            # open pince
-            self.handMove([False, self.pince_max],wait=True,abs=True)
+        # close boite stockage
+        # if not pick:
+        #     # arm go boite pose 1
+        #     self.move_group_arm.go(boitePose[0], wait=True)
             
-            # arm go boite pose 2
-            self.move_group_arm.go(boitePose[1], wait=True)
+        #     # open pince
+        #     self.handMove([False, self.pince_max],wait=True,abs=True)
             
-        
+        #     # arm go boite pose 2
+        #     self.move_group_arm.go(boitePose[1], wait=True)
+            
     def preleve(self):
         if self.prelevement_1_2_3 == 0:
             return
@@ -292,6 +302,10 @@ class Joystick_MoveGroupe (Joystick):
         
         # remember preleve number
         numberPreleve = self.prelevement_1_2_3
+        
+        # set liquide number
+        self.liquideNumber = numberPreleve
+        
         # get preleve position
         pickPose = self.prelevPose[numberPreleve - 1]
         # init pick thread
@@ -325,7 +339,7 @@ class Joystick_MoveGroupe (Joystick):
                 self.rate.sleep()
             self.printGreen("preleve {} done".format(numberPreleve))
     
-    def stock(self):
+    def stockSolideFrottis(self):
         if self.macro_stockage_1_2_3 == 0:
             return
         
@@ -366,6 +380,23 @@ class Joystick_MoveGroupe (Joystick):
                 self.rate.sleep()
             self.printGreen("stock {} done".format(numberStock))
     
+    def stockLiquide(self):
+        if self.macro_stockage_1_2_3 == 0:
+            return
+        
+        # remember liquide number
+        numberLiquide = self.macro_stockage_1_2_3
+        # start pump
+        self.liqude_pub.publish(numberLiquide)
+        self.printGreen("pump {} start".format(numberLiquide))
+        # update joystick while liquide number not changed
+        while self.macro_stockage_1_2_3 == numberLiquide:
+            self.joystickUpdate()
+            self.rate.sleep()
+        # stop pump
+        self.liqude_pub.publish(0)
+        self.printYellow("pump {} stop".format(numberLiquide))
+    
     def home(self):
         if self.macro_position_zero and not self.macro_position_zero_prev:
             # tell physical scara to go home
@@ -392,10 +423,11 @@ class Joystick_MoveGroupe (Joystick):
             verinPos, doigtAngles = self.move_group_hand.get_current_joint_values()
             doigtAngles -= 0.40387
             toolCenterPoint = self.move_group_arm.get_current_pose().pose.position
-            toolCenterPoint.z += -0.085 -0.025 -0.072 -math.cos(doigtAngles)*0.11509 +verinPos
+            toolCenterPoint.z += -0.049 -0.025 -0.072 -math.cos(doigtAngles)*0.11509 +verinPos
             self.tcp_marker.points = self.tcp_marker.points[1:] + [toolCenterPoint]
             self.tcp_pub.publish(self.tcp_marker)
             self.rate.sleep()
+    
     
     # movement control loop
     def run(self):
@@ -411,9 +443,16 @@ class Joystick_MoveGroupe (Joystick):
                 self.armMove(poseCommand, wait=False)
                 self.poseCommand_prev = poseCommand
                 # macro movement, wait=True
-                self.preleve()
-                self.stock()
                 self.home()
+                
+                if self.modification_mode_list[self.modification_mode_index] == "frottis":
+                    self.preleve()
+                    
+                if self.modification_mode_list[self.modification_mode_index] in ["solide","frottis"]:
+                    self.stockSolideFrottis()
+                    
+                if self.modification_mode_list[self.modification_mode_index] == "liquide":
+                    self.stockLiquide()
                 
                 # TODO pub lum cam modePre
                 
@@ -423,13 +462,16 @@ class Joystick_MoveGroupe (Joystick):
         
 
 if __name__ == '__main__':
-    
-    joystick_moveGroupe = Joystick_MoveGroupe(
+    try:
+        joystick_moveGroupe = Joystick_MoveGroupe(
         scale_pos=0.1, # max 20cm
         scale_rotation=0.1, # max 1deg
         sleepTime=0.1)
     
-    joystick_moveGroupe.run()
+        joystick_moveGroupe.run()
+    except rospy.ROSInterruptException:
+        pass
+    
 
 
 
