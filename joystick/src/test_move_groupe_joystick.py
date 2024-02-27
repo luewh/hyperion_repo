@@ -359,7 +359,7 @@ class Joystick_MoveGroupe (Joystick):
             # waiting physical scara home done
             self.homeDone = False
             while not self.homeDone:
-                self.printYellow("Waiting physical home to be done...", end='')
+                self.printYellow("Waiting physical home to be done...",end='\r')
                 self.rate.sleep()
             
         self.macro_position_zero_prev = self.macro_position_zero
