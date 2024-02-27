@@ -402,7 +402,7 @@
         <parent link="base"/>
         <child link="colonne"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="0" upper="6.35" effort="0.0" velocity="0.0"/>
+        <limit lower="0" upper="6.13" effort="0.0" velocity="0.0"/>
     </joint>
 
     <joint name="colonne_interne" type="prismatic">
