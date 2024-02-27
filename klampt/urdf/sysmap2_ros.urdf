@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- V2 : casque hyperion enlevé -->
+
 <robot name="sysmap">
 
     <link name="world"/>
@@ -149,7 +149,7 @@
         <collision>
             <origin rpy="1.57 0.0 0.0" />
             <geometry>
-                <mesh filename="package://klampt/meshes/5_ZoneElec_plateau_optimized.stl"/>
+                <mesh filename="package://klampt/meshes/5_ZoneElec_plateau_convexHull.stl"/>
             </geometry>
         </collision>
     </link>
