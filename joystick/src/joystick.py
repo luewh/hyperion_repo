@@ -15,6 +15,7 @@ class Joystick():
             self.thustmaster = pygame.joystick.Joystick(0)
         except:
             print("---\nno joystick avalable\n---")
+            exit()
             
         pygame.init()
         
@@ -29,7 +30,7 @@ class Joystick():
         self.macro_frotti_poussière = False
         self.prelevement_1_2_3 = 0
         self.modification_mode_index = 0
-        self.modification_mode_list = ["solide","liquide","frottis","poussière"]
+        self.modification_mode_list = ["poussière","solide","liquide","frottis"]
         self.on_off_camera = False
         self.on_off_lumiere = False
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 #Interafce Tkinker avec des voyants, boutons labels et autres
 #les entrées des voyants proviennent de topic ROS
 
@@ -15,5 +16,4 @@ if __name__ == "__main__":
     if platform.system() != "Windows":
         Subscriber= Subscriber(IHM)
     
-    
-   # IHM.mainloop()
+    # IHM.mainloop()

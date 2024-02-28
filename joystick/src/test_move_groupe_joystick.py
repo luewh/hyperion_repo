@@ -3,7 +3,7 @@
 import rospy
 import moveit_commander
 
-from std_msgs.msg import Bool, Int8
+from std_msgs.msg import Bool, Int8, Int16
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Quaternion, Point
 
@@ -101,6 +101,10 @@ class Joystick_MoveGroupe (Joystick):
         
         # init liquide
         self.liqude_pub = rospy.Publisher('/liquide', Int8, queue_size=1)
+        
+        # init preleve mode
+        self.modification_mode_index_prev = None
+        self.preleveMode_pub = rospy.Publisher('IHM/prelevement/PrelevSelectAct', Int16, queue_size=1)
         
         
         
@@ -428,6 +432,12 @@ class Joystick_MoveGroupe (Joystick):
             self.tcp_pub.publish(self.tcp_marker)
             self.rate.sleep()
     
+    def preleveModeUpdate(self):
+        if self.modification_mode_index != self.modification_mode_index_prev:
+            self.preleveMode_pub.publish(self.modification_mode_index+1)
+            
+        self.modification_mode_index_prev = self.modification_mode_index
+    
     
     # movement control loop
     def run(self):
@@ -444,6 +454,8 @@ class Joystick_MoveGroupe (Joystick):
                 self.poseCommand_prev = poseCommand
                 # macro movement, wait=True
                 self.home()
+                
+                self.preleveModeUpdate()
                 
                 if self.modification_mode_list[self.modification_mode_index] == "frottis":
                     self.preleve()
