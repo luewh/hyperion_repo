@@ -238,7 +238,7 @@ class IHM(ctk.CTk):
         self.UpdateLoginfo()
         
         self.Fonction_clignotante() # démarre la fonction clignotante
-        print("fin init creation IHM")
+        # print("fin init creation IHM")
         
         #self.mainloop() #ne pas remettre pb de thread; le mettre dans subscriber
         

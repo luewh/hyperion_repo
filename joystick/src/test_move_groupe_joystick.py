@@ -3,7 +3,7 @@
 import rospy
 import moveit_commander
 
-from std_msgs.msg import Bool, Int8, Int16
+from std_msgs.msg import Bool, Int8
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Quaternion, Point
 
@@ -77,12 +77,12 @@ class Joystick_MoveGroupe (Joystick):
         # home init
         self.macro_position_zero_prev = None
         self.homeDone = None
-        self.home_pub = rospy.Publisher('/home', Bool, queue_size=1)
+        self.home_pub = rospy.Publisher('/home', Bool, queue_size=1, latch=True)
         rospy.Subscriber('/home', Bool, self.homeCallback)
         
         # tcp init
         tcp_marker_points_lenght = 10
-        self.tcp_pub = rospy.Publisher('/tcp', Marker, queue_size = tcp_marker_points_lenght)
+        self.tcp_pub = rospy.Publisher('/tcp', Marker, queue_size = tcp_marker_points_lenght, latch=True)
         self.tcp_marker = Marker()
         self.tcp_marker.header.frame_id = "world"
         self.tcp_marker.type = Marker.POINTS
@@ -100,27 +100,49 @@ class Joystick_MoveGroupe (Joystick):
         tcpTask.start()
         
         # init liquide
-        self.liqude_pub = rospy.Publisher('/liquide', Int8, queue_size=1)
+        self.liqude_pub = rospy.Publisher('/liquide', Int8, queue_size=1, latch=True)
+        self.liqude_pub.publish(0)
         
         # init preleve mode
         self.modification_mode_index_prev = None
-        self.preleveMode_pub = rospy.Publisher('IHM/prelevement/PrelevSelectAct', Int16, queue_size=1)
+        self.preleveMode_pub = rospy.Publisher('IHM/prelevement/PrelevSelectAct', Int8, queue_size=1, latch=True)
+        self.preleveMode_pub.publish(self.modification_mode_index+1)
+        
+        # init preleve etat
+        # ["poussière","solide","liquide","frottis"]
+        # 0 : preleve
+        # 1 : boite vide
+        # 2 : prelevement en cours
+        # 3 : prelevement fini
+        # 4 : erreur
+        self.preleveEtat1 = [0]*4
+        self.preleveEtat1_prev = [None]*4
+        self.preleveEtat2 = [0]*4
+        self.preleveEtat2_prev = [None]*4
+        self.preleveEtat3 = [0]*4
+        self.preleveEtat3_prev = [None]*4
+        self.preleveEtat1_pub = rospy.Publisher('IHM/prelevement/PrelevEtat1', Int8, queue_size=1, latch=True)
+        self.preleveEtat2_pub = rospy.Publisher('IHM/prelevement/PrelevEtat2', Int8, queue_size=1, latch=True)
+        self.preleveEtat3_pub = rospy.Publisher('IHM/prelevement/PrelevEtat3', Int8, queue_size=1, latch=True)
+        self.preleveEtat1_pub.publish(0)
+        self.preleveEtat2_pub.publish(0)
+        self.preleveEtat3_pub.publish(0)
         
         
         
     def printRed(self,text, end='\r\n'):
-        print(" "*120, end='\r')
+        # print(" "*120, end='\r')
         print("{}{}{}".format('\033[91m',text,'\033[0m'), end=end)
     
     def printGreen(self,text, end='\r\n'):
-        print(" "*120, end='\r')
+        # print(" "*120, end='\r')
         print("{}{}{}".format('\033[92m',text,'\033[0m'), end=end)
     
     def printYellow(self,text, end='\r\n'):
-        print(" "*120, end='\r')
+        # print(" "*120, end='\r')
         print("{}{}{}".format('\033[93m',text,'\033[0m'), end=end)
     
-    def armMove (self,poseCommand,wait=False):
+    def armMove(self,poseCommand,wait=False):
         if poseCommand == [0,0,0]:
             if self.poseCommand_prev != [0,0,0]:
                 self.move_group_arm.stop()
@@ -307,6 +329,20 @@ class Joystick_MoveGroupe (Joystick):
         # remember preleve number
         numberPreleve = self.prelevement_1_2_3
         
+        # TODO put at end
+        # update preleve etat
+        if numberPreleve == 1:
+            self.preleveEtat1[self.modification_mode_index] = 2
+            self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+            
+        if numberPreleve == 2:
+            self.preleveEtat2[self.modification_mode_index] = 2
+            self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+            
+        if numberPreleve == 3:
+            self.preleveEtat3[self.modification_mode_index] = 2
+            self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
+        
         # set liquide number
         self.liquideNumber = numberPreleve
         
@@ -349,6 +385,20 @@ class Joystick_MoveGroupe (Joystick):
         
         # remember stock number
         numberStock = self.macro_stockage_1_2_3
+        
+        # update preleve etat
+        if numberStock == 1 and self.preleveEtat1[self.modification_mode_index] != 3:
+            self.preleveEtat1[self.modification_mode_index] = 2
+            self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+            
+        if numberStock == 2 and self.preleveEtat2[self.modification_mode_index] != 3:
+            self.preleveEtat2[self.modification_mode_index] = 2
+            self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+            
+        if numberStock == 3 and self.preleveEtat3[self.modification_mode_index] != 3:
+            self.preleveEtat3[self.modification_mode_index] = 2
+            self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
+        
         # get stock position
         dropPose = self.stockPose[numberStock - 1]
         boitePose = self.boitePose[numberStock - 1]
@@ -375,8 +425,35 @@ class Joystick_MoveGroupe (Joystick):
             # set at current joint position
             current_joints = self.move_group_arm.get_current_joint_values()
             self.move_group_arm.go(current_joints, wait=True)
+            
+            # update preleve etat
+            if numberStock == 1 and self.preleveEtat1[self.modification_mode_index] != 3:
+                self.preleveEtat1[self.modification_mode_index] = 1
+                self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+                
+            if numberStock == 2 and self.preleveEtat2[self.modification_mode_index] != 3:
+                self.preleveEtat2[self.modification_mode_index] = 1
+                self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+                
+            if numberStock == 3 and self.preleveEtat3[self.modification_mode_index] != 3:
+                self.preleveEtat3[self.modification_mode_index] = 1
+                self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
+                
         # pick drop thread end properly
         else:
+            # update preleve etat
+            if numberStock == 1:
+                self.preleveEtat1[self.modification_mode_index] = 3
+                self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+                
+            if numberStock == 2:
+                self.preleveEtat2[self.modification_mode_index] = 3
+                self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+                
+            if numberStock == 3:
+                self.preleveEtat3[self.modification_mode_index] = 3
+                self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
+                
             self.printYellow("Finished, please release the button...")
             # wait till preleve button released
             while self.macro_stockage_1_2_3 != 0:
@@ -390,6 +467,21 @@ class Joystick_MoveGroupe (Joystick):
         
         # remember liquide number
         numberLiquide = self.macro_stockage_1_2_3
+        
+        # TODO put at end
+        # update preleve etat
+        if numberLiquide == 1:
+            self.preleveEtat1[self.modification_mode_index] = 3
+            self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+            
+        if numberLiquide == 2:
+            self.preleveEtat2[self.modification_mode_index] = 3
+            self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+            
+        if numberLiquide == 3:
+            self.preleveEtat3[self.modification_mode_index] = 3
+            self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
+        
         # start pump
         self.liqude_pub.publish(numberLiquide)
         self.printGreen("pump {} start".format(numberLiquide))
@@ -436,7 +528,35 @@ class Joystick_MoveGroupe (Joystick):
         if self.modification_mode_index != self.modification_mode_index_prev:
             self.preleveMode_pub.publish(self.modification_mode_index+1)
             
-        self.modification_mode_index_prev = self.modification_mode_index
+            # update preleve etat
+            if self.preleveEtat1[self.modification_mode_index] == 0:
+                self.preleveEtat1[self.modification_mode_index] = 1
+            self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+                
+            if self.preleveEtat2[self.modification_mode_index] == 0:
+                self.preleveEtat2[self.modification_mode_index] = 1
+            self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+                
+            if self.preleveEtat3[self.modification_mode_index] == 0:
+                self.preleveEtat3[self.modification_mode_index] = 1
+            self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
+            
+            self.modification_mode_index_prev = self.modification_mode_index
+    
+    # def preleveEtatUpdate(self):
+    #     if self.modification_mode_index != self.modification_mode_index_prev:
+            
+    #         if self.preleveEtat1[self.modification_mode_index] != self.preleveEtat1_prev[self.modification_mode_index]:
+    #             self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+    #             self.preleveEtat1_prev[self.modification_mode_index] = self.preleveEtat1[self.modification_mode_index]
+                
+    #         if self.preleveEtat2[self.modification_mode_index] != self.preleveEtat2_prev[self.modification_mode_index]:
+    #             self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+    #             self.preleveEtat2_prev[self.modification_mode_index] = self.preleveEtat2[self.modification_mode_index]
+                
+    #         if self.preleveEtat3[self.modification_mode_index] != self.preleveEtat3_prev[self.modification_mode_index]:
+    #             self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
+    #             self.preleveEtat3_prev[self.modification_mode_index] = self.preleveEtat3[self.modification_mode_index]
     
     
     # movement control loop
@@ -455,18 +575,22 @@ class Joystick_MoveGroupe (Joystick):
                 # macro movement, wait=True
                 self.home()
                 
+                # self.preleveEtatUpdate()
                 self.preleveModeUpdate()
                 
-                if self.modification_mode_list[self.modification_mode_index] == "frottis":
+                preleveMode = self.modification_mode_list[self.modification_mode_index]
+                if preleveMode in ["poussière","frottis"]:
                     self.preleve()
-                    
-                if self.modification_mode_list[self.modification_mode_index] in ["solide","frottis"]:
+                if preleveMode in ["solide","frottis"]:
                     self.stockSolideFrottis()
-                    
-                if self.modification_mode_list[self.modification_mode_index] == "liquide":
+                if preleveMode == "liquide":
                     self.stockLiquide()
                 
-                # TODO pub lum cam modePre
+                # print(self.preleveEtat1)
+                # print(self.preleveEtat2)
+                # print(self.preleveEtat3)
+                
+                # TODO pub lum cam
                 
                 self.rate.sleep()
             except KeyboardInterrupt:

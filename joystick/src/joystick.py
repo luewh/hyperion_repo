@@ -251,7 +251,7 @@ class Joystick():
                         self.degre_ouverture_pince = round((self.thustmaster.get_axis(3)+1)/2,self.effecteur_x_y_and_pince_sensibilite)
                         # TODO pub self.degre_ouverture_pince
             
-            print(" "*120, end="\r")
+            # print(" "*120, end="\r")
             print("X : {} Y : {} Z : {} R : {} PINCE : {} BASE : {} BUTTON : {}"
                   .format(str(self.effecteur_x_vitesse).ljust(5),
                           str(self.effecteur_y_vitesse).ljust(5),

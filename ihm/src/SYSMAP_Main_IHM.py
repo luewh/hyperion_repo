@@ -15,5 +15,3 @@ if __name__ == "__main__":
     
     if platform.system() != "Windows":
         Subscriber= Subscriber(IHM)
-    
-    # IHM.mainloop()
