@@ -16,17 +16,17 @@ class Subscriber() :
     def __init__(self,IHM):
         #Init variables
         #list param
-        self.listPrelevEtat = ["Prélèvement",
-                               "Boite vide, pas de prélèvement en cours",
-                               "Prélèvement en cours",
-                               "Prélèvement fini, stockage plein",
-                               "Défaut rencontré dans le cycle de prélèvement"]
+        self.listPrelevEtat = ["Boite vide",
+                               "Outil équipé",
+                               "Stockage en cours",
+                               "Prélèvement fini",
+                               "Défaut"]
         
         self.listCoulEtatPrelev = ["dark grey",
                                    "light Green",
                                    "orange",
-                                   "light Green",
-                                   "red"] #couleur de fond etat prelevement
+                                   "blue",
+                                   "red"]
         self.IHM = IHM
 
         #Dictionnaires

@@ -2,6 +2,7 @@
 
 import rospy
 import moveit_commander
+import geometry_msgs.msg
 
 from std_msgs.msg import Bool, Int8
 from visualization_msgs.msg import Marker
@@ -14,7 +15,7 @@ import math
 from threading import Thread, Event
 
 from joystick import Joystick
-# from euler_quaternion import euler_to_quaternion, quaternion_to_euler
+from euler_quaternion import euler_to_quaternion, quaternion_to_euler
 
 import logging
 logger = logging.getLogger()
@@ -39,6 +40,7 @@ class Joystick_MoveGroupe (Joystick):
         self.rate = rospy.Rate(1/self.sleepTime)
 
         self.robot = moveit_commander.RobotCommander()
+        self.scene = moveit_commander.PlanningSceneInterface()
         
         group_name_arm = "scara_arm"
         self.move_group_arm = moveit_commander.MoveGroupCommander(group_name_arm)
@@ -53,9 +55,9 @@ class Joystick_MoveGroupe (Joystick):
         self.scale_pos = scale_pos
         self.scale_rotation = scale_rotation
         
-        self.prelevPose = [[2.75,0,4.65,3.10],
-                           [2.44,0,4.64,2.80],
-                           [2.04,0,4.44,2.60]]
+        self.prelevFrottisPose = [[2.33,0,4.53,2.73],
+                                  [2.01,0,4.30,2.05],
+                                  [1.97,0,4.45,1.85]]
         
         self.stockPose = [[2.01,0,4.01,3.51],
                           [2.44,0,4.22,3.83],
@@ -110,11 +112,11 @@ class Joystick_MoveGroupe (Joystick):
         
         # init preleve etat
         # ["poussière","solide","liquide","frottis"]
-        # 0 : preleve
-        # 1 : boite vide
-        # 2 : prelevement en cours
-        # 3 : prelevement fini
-        # 4 : erreur
+        # 1 = "Boite vide",
+        # 2 = "Outil équipé",
+        # 3 = "Stockage en cours",
+        # 4 = "Prélèvement fini",
+        # 5 = "Défaut"]
         self.preleveEtat1 = [0]*4
         self.preleveEtat1_prev = [None]*4
         self.preleveEtat2 = [0]*4
@@ -128,6 +130,12 @@ class Joystick_MoveGroupe (Joystick):
         self.preleveEtat2_pub.publish(0)
         self.preleveEtat3_pub.publish(0)
         
+        self.meshPath = __file__.replace("/joystick/src/test_move_groupe_joystick.py","/klampt/meshes/")
+        self.frottis1Pose = Point(-0.052,0.12,0.0655)
+        self.frottis2Pose = Point(-0.134,0.177,0.0655)
+        self.frottis3Pose = Point(-0.077,0.177,0.0655)
+        
+        self.scene.remove_attached_object("doigt1","frottis1")
         
         
     def printRed(self,text, end='\r\n'):
@@ -142,7 +150,7 @@ class Joystick_MoveGroupe (Joystick):
         # print(" "*120, end='\r')
         print("{}{}{}".format('\033[93m',text,'\033[0m'), end=end)
     
-    def armMove(self,poseCommand,wait=False):
+    def armMove(self,poseCommand,wait=False,collision=True):
         if poseCommand == [0,0,0]:
             if self.poseCommand_prev != [0,0,0]:
                 self.move_group_arm.stop()
@@ -158,9 +166,9 @@ class Joystick_MoveGroupe (Joystick):
         
         (plan, fraction) = self.move_group_arm.compute_cartesian_path(
             waypoints,  # waypoints to follow 
-            0.005,       # eef_step
+            0.001,       # eef_step
             0,      # jump_threshold
-            avoid_collisions=True)
+            avoid_collisions=collision)
         self.move_group_arm.execute(plan, wait=wait)
         
         colonne_value = self.move_group_arm.get_current_joint_values()
@@ -257,7 +265,7 @@ class Joystick_MoveGroupe (Joystick):
         # execute
         self.move_group_hand.go(current_joints, wait=wait)
     
-    def pickDropMove(self, pickPose, pickDist, pick: bool, event: Event, boitePose=None):
+    def pickDropMove(self, pickPose, pickDist, pick: bool, event: Event, boitePose=None, outil=None):
         self.move_group_arm.stop()
         self.move_group_hand.stop()
         
@@ -289,7 +297,10 @@ class Joystick_MoveGroupe (Joystick):
             return
         if pick:
             # close pince
-            self.handMove([False, 0],wait=True,abs=True)
+            self.handMove([False, 0.11],wait=True,abs=True)
+            self.scene.attach_box("doigt1",outil,touch_links=["doigt1"])
+            # close pince
+            self.handMove([False, 0.11],wait=True,abs=True)
         else:
             # open pince 0.22 rad to release object
             self.handMove([False, 0.22],wait=True,abs=False)
@@ -297,7 +308,7 @@ class Joystick_MoveGroupe (Joystick):
         if event.is_set():
             return
         # arm up cartesian
-        self.armMove([0,0,pickDist],wait=True)
+        self.armMove([0,0,pickDist],wait=True,collision=False)
         
         if event.is_set():
             return
@@ -316,7 +327,7 @@ class Joystick_MoveGroupe (Joystick):
         #     # arm go boite pose 2
         #     self.move_group_arm.go(boitePose[1], wait=True)
             
-    def preleve(self):
+    def preleveFrottis(self):
         if self.prelevement_1_2_3 == 0:
             return
         
@@ -329,28 +340,15 @@ class Joystick_MoveGroupe (Joystick):
         # remember preleve number
         numberPreleve = self.prelevement_1_2_3
         
-        # TODO put at end
-        # update preleve etat
-        if numberPreleve == 1:
-            self.preleveEtat1[self.modification_mode_index] = 2
-            self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
-            
-        if numberPreleve == 2:
-            self.preleveEtat2[self.modification_mode_index] = 2
-            self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
-            
-        if numberPreleve == 3:
-            self.preleveEtat3[self.modification_mode_index] = 2
-            self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
-        
-        # set liquide number
-        self.liquideNumber = numberPreleve
+        # # set liquide number
+        # self.liquideNumber = numberPreleve
         
         # get preleve position
-        pickPose = self.prelevPose[numberPreleve - 1]
+        pickPose = self.prelevFrottisPose[numberPreleve - 1]
         # init pick thread
         event = Event()
-        moveTask = Thread(target=self.pickDropMove, args=(pickPose, 0.07/self.scale_pos, True, event))
+        moveTask = Thread(target=self.pickDropMove,
+                          args=(pickPose, 0.11/self.scale_pos, True, event, None, "frottis{}".format(numberPreleve)))
         
         # run thread
         moveTask.start()
@@ -364,7 +362,7 @@ class Joystick_MoveGroupe (Joystick):
         if moveTask.is_alive():
             self.printRed("Aborted preleve {}".format(numberPreleve))
             # end thread
-            event.set()  
+            event.set()
             self.move_group_arm.stop()
             self.move_group_hand.stop()
             # set at current joint position
@@ -372,12 +370,25 @@ class Joystick_MoveGroupe (Joystick):
             self.move_group_arm.go(current_joints, wait=True)
         # pick drop thread end properly
         else:
+            # update frottis preleve state to "Outil équipé"
+            if numberPreleve == 1:
+                self.preleveEtat1[self.modification_mode_index] = 1
+                self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+            if numberPreleve == 2:
+                self.preleveEtat2[self.modification_mode_index] = 1
+                self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+            if numberPreleve == 3:
+                self.preleveEtat3[self.modification_mode_index] = 1
+                self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
             self.printYellow("Finished, please release the button...")
             # wait till preleve button released
             while self.prelevement_1_2_3 != 0:
                 self.joystickUpdate()
                 self.rate.sleep()
             self.printGreen("preleve {} done".format(numberPreleve))
+    
+    def prelevePoussiere(self):
+        pass
     
     def stockSolideFrottis(self):
         if self.macro_stockage_1_2_3 == 0:
@@ -461,6 +472,7 @@ class Joystick_MoveGroupe (Joystick):
                 self.rate.sleep()
             self.printGreen("stock {} done".format(numberStock))
     
+    # redo start pump pub
     def stockLiquide(self):
         if self.macro_stockage_1_2_3 == 0:
             return
@@ -528,36 +540,32 @@ class Joystick_MoveGroupe (Joystick):
         if self.modification_mode_index != self.modification_mode_index_prev:
             self.preleveMode_pub.publish(self.modification_mode_index+1)
             
-            # update preleve etat
-            if self.preleveEtat1[self.modification_mode_index] == 0:
-                self.preleveEtat1[self.modification_mode_index] = 1
-            self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
-                
-            if self.preleveEtat2[self.modification_mode_index] == 0:
-                self.preleveEtat2[self.modification_mode_index] = 1
-            self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
-                
-            if self.preleveEtat3[self.modification_mode_index] == 0:
-                self.preleveEtat3[self.modification_mode_index] = 1
-            self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
-            
             self.modification_mode_index_prev = self.modification_mode_index
-    
-    # def preleveEtatUpdate(self):
-    #     if self.modification_mode_index != self.modification_mode_index_prev:
             
-    #         if self.preleveEtat1[self.modification_mode_index] != self.preleveEtat1_prev[self.modification_mode_index]:
-    #             self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
-    #             self.preleveEtat1_prev[self.modification_mode_index] = self.preleveEtat1[self.modification_mode_index]
-                
-    #         if self.preleveEtat2[self.modification_mode_index] != self.preleveEtat2_prev[self.modification_mode_index]:
-    #             self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
-    #             self.preleveEtat2_prev[self.modification_mode_index] = self.preleveEtat2[self.modification_mode_index]
-                
-    #         if self.preleveEtat3[self.modification_mode_index] != self.preleveEtat3_prev[self.modification_mode_index]:
-    #             self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
-    #             self.preleveEtat3_prev[self.modification_mode_index] = self.preleveEtat3[self.modification_mode_index]
-    
+            # ajout outil frottis
+            if self.modification_mode_list[self.modification_mode_index] == "frottis":
+                pose = geometry_msgs.msg.PoseStamped()
+                pose.header.frame_id = "electrique"
+                pose.pose.position = self.frottis1Pose
+                pose.pose.orientation.w = 1.0
+                if self.preleveEtat1[-1] in [0,1]:
+                    self.printGreen("adding frottis 1")
+                    self.scene.add_mesh("frottis1",pose,self.meshPath+"5_ZoneElec_frottis.stl")
+                pose.pose.position = self.frottis2Pose
+                pose.pose.orientation.z = -0.7068
+                pose.pose.orientation.w = 0.7073
+                if self.preleveEtat2[-1] in [0,1]:
+                    self.printGreen("adding frottis 2")
+                    self.scene.add_mesh("frottis2",pose,self.meshPath+"5_ZoneElec_frottis.stl")
+                pose.pose.position = self.frottis3Pose
+                if self.preleveEtat3[-1] in [0,1]:
+                    self.printGreen("adding frottis 3")
+                    self.scene.add_mesh("frottis3",pose,self.meshPath+"5_ZoneElec_frottis.stl")
+            else:
+                self.scene.remove_world_object("frottis1")
+                self.scene.remove_world_object("frottis2")
+                self.scene.remove_world_object("frottis3")
+            
     
     # movement control loop
     def run(self):
@@ -579,8 +587,10 @@ class Joystick_MoveGroupe (Joystick):
                 self.preleveModeUpdate()
                 
                 preleveMode = self.modification_mode_list[self.modification_mode_index]
-                if preleveMode in ["poussière","frottis"]:
-                    self.preleve()
+                if preleveMode == "frottis":
+                    self.preleveFrottis()
+                elif preleveMode == "poussière":
+                    self.prelevePoussiere()
                 if preleveMode in ["solide","frottis"]:
                     self.stockSolideFrottis()
                 if preleveMode == "liquide":
@@ -598,6 +608,7 @@ class Joystick_MoveGroupe (Joystick):
         
 
 if __name__ == '__main__':
+    print(euler_to_quaternion(0,0,-1.57))
     try:
         joystick_moveGroupe = Joystick_MoveGroupe(
         scale_pos=0.1, # max 20cm
