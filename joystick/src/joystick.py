@@ -119,7 +119,7 @@ class Joystick():
                 # macro frotti poussière press reset
                 if event.dict["button"] == 9:
                     self.macro_frotti_poussière = False
-                    button_even = "Macro frotti/poussière : {}".format(self.macro_frotti_poussière)
+                    button_even = "Macro frotti : {}".format(self.macro_frotti_poussière)
                     # print(button_even)
                     # TODO pub self.macro_frotti_poussière
 
@@ -181,7 +181,7 @@ class Joystick():
                 # macro frotti poussière press
                 if event.dict["button"] == 9:
                     self.macro_frotti_poussière = True
-                    button_even = "Macro frotti/poussière : {}".format(self.macro_frotti_poussière)
+                    button_even = "Macro frotti : {}".format(self.macro_frotti_poussière)
                     # print(button_even)
                     # TODO pub self.macro_frotti_poussière
 
