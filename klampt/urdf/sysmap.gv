@@ -1,0 +1,68 @@
+digraph G {
+node [shape=box];
+"world" [label="world"];
+"platine" [label="platine"];
+"aileron" [label="aileron"];
+"base" [label="base"];
+"colonne" [label="colonne"];
+"interne" [label="interne"];
+"externe" [label="externe"];
+"poignet" [label="poignet"];
+"verin" [label="verin"];
+"pince_base" [label="pince_base"];
+"doigt1" [label="doigt1"];
+"doigt2" [label="doigt2"];
+"doigt3" [label="doigt3"];
+"batterie" [label="batterie"];
+"electrique" [label="electrique"];
+"electrique_plateau" [label="electrique_plateau"];
+"stockage_boite" [label="stockage_boite"];
+"stockage_couvercle" [label="stockage_couvercle"];
+"stockage_boite2" [label="stockage_boite2"];
+"stockage_couvercle2" [label="stockage_couvercle2"];
+"stockage_boite3" [label="stockage_boite3"];
+"stockage_couvercle3" [label="stockage_couvercle3"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"world" -> "world_platine" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"world_platine" -> "platine"
+"platine" -> "platine_aileron" [label="xyz: -0.42 0.042 0 \nrpy: 0 -0 0"]
+"platine_aileron" -> "aileron"
+"platine" -> "platine_base" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"platine_base" -> "base"
+"base" -> "base_colonne" [label="xyz: 0 0 0.03 \nrpy: 0 0 0.878785"]
+"base_colonne" -> "colonne"
+"colonne" -> "colonne_interne" [label="xyz: 0 0 0.391 \nrpy: 0 -0 0"]
+"colonne_interne" -> "interne"
+"interne" -> "interne_externe" [label="xyz: 0.214559 0.163904 -0.005 \nrpy: 0 -0 2.48"]
+"interne_externe" -> "externe"
+"externe" -> "externe_poignet" [label="xyz: 0.29117 0.13275 0.03 \nrpy: 0 -0 2.36"]
+"externe_poignet" -> "poignet"
+"poignet" -> "poignet_verin" [label="xyz: 0 0 -0.049 \nrpy: 0 -0 0"]
+"poignet_verin" -> "verin"
+"verin" -> "verin_pince" [label="xyz: 0 0 -0.025 \nrpy: -1.57 5.55112e-17 0.74"]
+"verin_pince" -> "pince_base"
+"pince_base" -> "pince_doigt1" [label="xyz: 0.02405 0.07176 0.05466 \nrpy: 3.14159 1.04759 3.14159"]
+"pince_doigt1" -> "doigt1"
+"pince_base" -> "pince_doigt2" [label="xyz: -0.05936 0.07176 -0.0065 \nrpy: 0 -0 0"]
+"pince_doigt2" -> "doigt2"
+"pince_base" -> "pince_doigt3" [label="xyz: 0.03531 0.07176 -0.04816 \nrpy: 3.14159 -1.04759 3.14159"]
+"pince_doigt3" -> "doigt3"
+"platine" -> "platine_batterie" [label="xyz: 0.11 0.276 0 \nrpy: 0 -0 0"]
+"platine_batterie" -> "batterie"
+"platine" -> "platine_electrique" [label="xyz: -0.1179 -0.004 0 \nrpy: 0 -0 0"]
+"platine_electrique" -> "electrique"
+"platine" -> "platine_electriquePlateau" [label="xyz: -0.1179 -0.004 0 \nrpy: 0 -0 0"]
+"platine_electriquePlateau" -> "electrique_plateau"
+"platine" -> "platine_stockageBoite" [label="xyz: -0.2789 -0.06397 0 \nrpy: 1.57 5.55112e-17 -1.57"]
+"platine_stockageBoite" -> "stockage_boite"
+"stockage_boite" -> "stockageBoite_couvercle" [label="xyz: -0.0185 0.1203 0.1528 \nrpy: -0.117 0 0"]
+"stockageBoite_couvercle" -> "stockage_couvercle"
+"platine" -> "platine_stockageBoite2" [label="xyz: -0.2789 0.05803 0 \nrpy: 1.57 5.55112e-17 -1.57"]
+"platine_stockageBoite2" -> "stockage_boite2"
+"stockage_boite2" -> "stockageBoite_couvercle2" [label="xyz: -0.0185 0.1203 0.1528 \nrpy: -0.117 0 0"]
+"stockageBoite_couvercle2" -> "stockage_couvercle2"
+"platine" -> "platine_stockageBoite3" [label="xyz: -0.2789 0.18003 0 \nrpy: 1.57 5.55112e-17 -1.57"]
+"platine_stockageBoite3" -> "stockage_boite3"
+"stockage_boite3" -> "stockageBoite_couvercle3" [label="xyz: -0.0185 0.1203 0.1528 \nrpy: -0.117 0 0"]
+"stockageBoite_couvercle3" -> "stockage_couvercle3"
+}
