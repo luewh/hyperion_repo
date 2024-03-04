@@ -44,13 +44,13 @@ class Joystick_MoveGroupe (Joystick):
         
         group_name_arm = "scara_arm"
         self.move_group_arm = moveit_commander.MoveGroupCommander(group_name_arm)
-        self.printYellow("Doing home...", end='\r')
+        # self.printYellow("Doing home...", end='\r')
         # self.move_group_arm.go([0,0,0,0], wait=True)
         
         group_name_hand = "scara_hand"
         self.move_group_hand = moveit_commander.MoveGroupCommander(group_name_hand)
         # self.move_group_hand.go([0,0], wait=True)
-        self.printGreen("home done")
+        # self.printGreen("home done")
         
         self.scale_pos = scale_pos
         self.scale_rotation = scale_rotation
@@ -59,6 +59,12 @@ class Joystick_MoveGroupe (Joystick):
                                   [2.43,0,4.10,3.71],
                                   [2.01,0,4.30,3.14]]
         
+        self.prelevLiquidePose = [[2.33,0,4.53,2.73],
+                                  [2.43,0,4.10,3.71],
+                                  [2.01,0,4.30,3.14]]
+        
+        self.prelevPoussierePose = [2.33,0,4.53,2.73]
+        
         self.stockPose = [[2.00,0,3.90,3.49],
                           [2.39,0,4.10,3.89],
                           [2.80,0,4.12,4.05]]
@@ -66,7 +72,6 @@ class Joystick_MoveGroupe (Joystick):
         self.pince_max = 0.8346
         self.degre_ouverture_pince_prev = None
         self.degre_ouverture_pince_prev_prev = None
-        
         self.base_max = 6.35
         self.poignet_max = 6.35
         
@@ -132,7 +137,6 @@ class Joystick_MoveGroupe (Joystick):
         self.frottis3Pose = Point(-0.082,0.259,0.0655)
         
         
-        
     def printRed(self,text, end='\r\n'):
         # print(" "*120, end='\r')
         print("{}{}{}".format('\033[91m',text,'\033[0m'), end=end)
@@ -151,6 +155,7 @@ class Joystick_MoveGroupe (Joystick):
                 self.move_group_arm.stop()
             return
         
+        # combine position
         self.move_group_arm.stop()
         waypoints = []
         wpose = self.move_group_arm.get_current_pose().pose
@@ -158,13 +163,27 @@ class Joystick_MoveGroupe (Joystick):
         wpose.position.y += self.scale_pos * poseCommand[1]
         wpose.position.z += self.scale_pos * poseCommand[2]
         waypoints.append(copy.deepcopy(wpose))
-        
+        # compute plan
         (plan, fraction) = self.move_group_arm.compute_cartesian_path(
             waypoints,  # waypoints to follow 
             0.001,       # eef_step
             0,      # jump_threshold
             avoid_collisions=collision)
-        self.move_group_arm.execute(plan, wait=wait)
+        # check singularity
+        points = plan.joint_trajectory.points
+        singularity = False
+        thresholdSingularity  = 0.2
+        for pointIndex in range(len(points)-1):
+            for jointIndex in range(4):
+                diff = abs(points[pointIndex].positions[jointIndex] - points[pointIndex+1].positions[jointIndex])
+                if diff > thresholdSingularity:
+                    singularity = True
+                    break
+        # execute plan
+        if singularity:
+            self.printRed("singularity")
+        else:
+            self.move_group_arm.execute(plan, wait=wait)
         
         colonne_value = self.move_group_arm.get_current_joint_values()
         verin_value = self.move_group_hand.get_current_joint_values()
@@ -260,7 +279,7 @@ class Joystick_MoveGroupe (Joystick):
         # execute
         self.move_group_hand.go(current_joints, wait=wait)
     
-    def pickDropMove(self, pickPose, pickDist, pick: bool, event: Event, outil=None):
+    def pickDropMove(self, pickPose, pickDist, pick: bool, event: Event):
         self.move_group_arm.stop()
         self.move_group_hand.stop()
         
@@ -277,7 +296,7 @@ class Joystick_MoveGroupe (Joystick):
         if event.is_set():
             return
         if pick:
-            # open pince at 22%
+            # open pince at 15%
             self.handMove([False, 0.15],wait=True,abs=True)
         else:
             # no action needed
@@ -307,7 +326,7 @@ class Joystick_MoveGroupe (Joystick):
             # close pince
             self.handMove([False, 0],wait=True,abs=True)
             
-    def preleveFrottis(self):
+    def preleveFrottisLiquide(self, preleveMode):
         if self.prelevement_1_2_3 == 0:
             return
         
@@ -321,16 +340,18 @@ class Joystick_MoveGroupe (Joystick):
         numberPreleve = self.prelevement_1_2_3
         
         # get preleve position
-        pickPose = self.prelevFrottisPose[numberPreleve - 1]
-        # init pick thread
+        if preleveMode == "frottis":
+            pickPose = self.prelevFrottisPose[numberPreleve - 1]
+        elif preleveMode == "liquide":
+            pickPose = self.prelevLiquidePose[numberPreleve - 1]
+        # init thread
         event = Event()
         moveTask = Thread(target=self.pickDropMove,
-                          args=(pickPose, 0.106/self.scale_pos, True, event, "frottis{}".format(numberPreleve)))
+                          args=(pickPose, 0.106/self.scale_pos, True, event))
         
         # run thread
         moveTask.start()
-        # update joystick while preleve number not changed
-        # and pick thread not end
+        # update joystick while preleve number not changed and thread not end
         while self.prelevement_1_2_3 == numberPreleve and moveTask.is_alive():
             self.joystickUpdate()
             self.rate.sleep()
@@ -345,9 +366,9 @@ class Joystick_MoveGroupe (Joystick):
             # set at current joint position
             current_joints = self.move_group_arm.get_current_joint_values()
             self.move_group_arm.go(current_joints, wait=True)
-        # pick drop thread end properly
+        # thread end properly
         else:
-            # update frottis preleve state to "Outil équipé"
+            # update frottis or liquide preleve state to "Outil équipé"
             if numberPreleve == 1:
                 self.preleveEtat1[self.modification_mode_index] = 1
                 self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
@@ -365,7 +386,53 @@ class Joystick_MoveGroupe (Joystick):
             self.printGreen("preleve {} done".format(numberPreleve))
     
     def prelevePoussiere(self):
-        pass
+        if self.prelevement_1_2_3 == 0:
+            return
+        
+        # check gripper to be closed
+        current_joints = self.move_group_hand.get_current_joint_values()
+        if current_joints[1] > 0.1:
+            self.printRed("please close the gripper", end="\r")
+            return
+        
+        
+        # init thread
+        event = Event()
+        moveTask = Thread(target=self.pickDropMove,
+                          args=(self.prelevPoussierePose, 0.09/self.scale_pos, True, event))
+        
+        # run thread
+        moveTask.start()
+        # update joystick while preleve number not changed and thread not end
+        while self.prelevement_1_2_3 != 0 and moveTask.is_alive():
+            self.joystickUpdate()
+            self.rate.sleep()
+        
+        # preleve number changed during pick
+        if moveTask.is_alive():
+            self.printRed("Aborted preleve poussière")
+            # end thread
+            event.set()
+            self.move_group_arm.stop()
+            self.move_group_hand.stop()
+            # set at current joint position
+            current_joints = self.move_group_arm.get_current_joint_values()
+            self.move_group_arm.go(current_joints, wait=True)
+        # thread end properly
+        else:
+            # update poussière preleve state to "Outil équipé"
+            self.preleveEtat1[self.modification_mode_index] = 1
+            self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+            self.preleveEtat2[self.modification_mode_index] = 1
+            self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+            self.preleveEtat3[self.modification_mode_index] = 1
+            self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
+            self.printYellow("Finished, please release the button...")
+            # wait till preleve button released
+            while self.prelevement_1_2_3 != 0:
+                self.joystickUpdate()
+                self.rate.sleep()
+            self.printGreen("preleve poussière done")
     
     def stockSolideFrottis(self):
         if self.macro_stockage_1_2_3 == 0:
@@ -448,6 +515,9 @@ class Joystick_MoveGroupe (Joystick):
                 self.rate.sleep()
             self.printGreen("stock {} done".format(numberStock))
     
+    def stockPoussiere(self):
+        pass
+    
     # redo start pump pub
     def stockLiquide(self):
         if self.macro_stockage_1_2_3 == 0:
@@ -481,26 +551,26 @@ class Joystick_MoveGroupe (Joystick):
         self.liqude_pub.publish(0)
         self.printYellow("pump {} stop".format(numberLiquide))
     
-    def home(self):
-        if self.macro_position_zero and not self.macro_position_zero_prev:
-            # tell physical scara to go home
-            self.home_pub.publish(True)
-            # scara arm and hand go home
-            self.move_group_arm.go([0,0,0,0], wait=True)
-            self.move_group_hand.go([0,0], wait=True)
+    # def home(self):
+    #     if self.macro_position_zero and not self.macro_position_zero_prev:
+    #         # tell physical scara to go home
+    #         self.home_pub.publish(True)
+    #         # scara arm and hand go home
+    #         self.move_group_arm.go([0,0,0,0], wait=True)
+    #         self.move_group_hand.go([0,0], wait=True)
             
-            # waiting physical scara home done
-            self.homeDone = False
-            while not self.homeDone:
-                self.printYellow("Waiting physical home to be done...", end='\r')
-                self.rate.sleep()
+    #         # waiting physical scara home done
+    #         self.homeDone = False
+    #         while not self.homeDone:
+    #             self.printYellow("Waiting physical home to be done...", end='\r')
+    #             self.rate.sleep()
             
-        self.macro_position_zero_prev = self.macro_position_zero
+    #     self.macro_position_zero_prev = self.macro_position_zero
             
-    def homeCallback(self, home):
-        if not home.data:
-            self.printGreen("physical home done")
-            self.homeDone = True
+    # def homeCallback(self, home):
+    #     if not home.data:
+    #         self.printGreen("physical home done")
+    #         self.homeDone = True
     
     def tcpUpdate(self):
         while True:
@@ -517,46 +587,12 @@ class Joystick_MoveGroupe (Joystick):
             self.preleveMode_pub.publish(self.modification_mode_index+1)
             
             # pub and update corresponding preleve state
-            # if self.preleveEtat1[self.modification_mode_index] != self.preleveEtat1_prev[self.modification_mode_index]:
             self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
             self.preleveEtat1_prev[self.modification_mode_index] = self.preleveEtat1[self.modification_mode_index]
-
-            # if self.preleveEtat2[self.modification_mode_index] != self.preleveEtat2_prev[self.modification_mode_index]:
             self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
             self.preleveEtat2_prev[self.modification_mode_index] = self.preleveEtat2[self.modification_mode_index]
-
-            # if self.preleveEtat3[self.modification_mode_index] != self.preleveEtat3_prev[self.modification_mode_index]:
             self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
             self.preleveEtat3_prev[self.modification_mode_index] = self.preleveEtat3[self.modification_mode_index]
-            
-            
-            # # ajout outil frottis
-            # if self.modification_mode_list[self.modification_mode_index] == "frottis":
-            #     pose = geometry_msgs.msg.PoseStamped()
-            #     pose.header.frame_id = "electrique"
-            #     pose.pose.position = self.frottis1Pose
-            #     pose.pose.orientation.w = 1.0
-            #     if self.preleveEtat1[-1] in [0,1]:
-            #         self.printGreen("adding frottis 1")
-            #         self.scene.add_mesh("frottis1",pose,self.meshPath+"5_ZoneElec_frottis_hollow_convexHull_V2.stl")
-            #     pose.pose.position = self.frottis2Pose
-            #     pose.pose.orientation.z = 0.7068
-            #     pose.pose.orientation.w = 0.7073
-            #     if self.preleveEtat2[-1] in [0,1]:
-            #         self.printGreen("adding frottis 2")
-            #         self.scene.add_mesh("frottis2",pose,self.meshPath+"5_ZoneElec_frottis_hollow_convexHull_V2.stl")
-            #     pose.pose.position = self.frottis3Pose
-            #     if self.preleveEtat3[-1] in [0,1]:
-            #         self.printGreen("adding frottis 3")
-            #         self.scene.add_mesh("frottis3",pose,self.meshPath+"5_ZoneElec_frottis_hollow_convexHull_V2.stl")
-                    
-            # elif self.modification_mode_list[self.modification_mode_index_prev] == "frottis":
-            #     self.scene.remove_attached_object("doigt1","frottis1")
-            #     self.scene.remove_attached_object("doigt1","frottis2")
-            #     self.scene.remove_attached_object("doigt1","frottis3")
-            #     self.scene.remove_world_object("frottis1")
-            #     self.scene.remove_world_object("frottis2")
-            #     self.scene.remove_world_object("frottis3")
             
             self.modification_mode_index_prev = self.modification_mode_index
     
@@ -685,22 +721,24 @@ class Joystick_MoveGroupe (Joystick):
                 poseCommand = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
                 self.armMove(poseCommand, wait=False)
                 self.poseCommand_prev = poseCommand
-                # macro movement, wait=True
+                # macro movement, thread
                 # self.home()
                 self.macroFrottis()
                 
-                # self.preleveEtatUpdate()
                 self.preleveModeUpdate()
                 
                 preleveMode = self.modification_mode_list[self.modification_mode_index]
-                if preleveMode == "frottis":
-                    self.preleveFrottis()
+                if preleveMode in ["frottis","liquide"]:
+                    self.preleveFrottisLiquide(preleveMode)
                 elif preleveMode == "poussière":
                     self.prelevePoussiere()
+                    
                 if preleveMode in ["solide","frottis"]:
                     self.stockSolideFrottis()
-                if preleveMode == "liquide":
+                elif preleveMode == "liquide":
                     self.stockLiquide()
+                elif preleveMode == "poussière":
+                    self.stockPoussiere()
                 
                 # TODO pub lum cam
                 
@@ -712,7 +750,7 @@ class Joystick_MoveGroupe (Joystick):
 if __name__ == '__main__':
     try:
         joystick_moveGroupe = Joystick_MoveGroupe(
-        scale_pos=0.1, # max 20cm
+        scale_pos=0.1, # max 1q0cm
         scale_rotation=0.1, # max 1deg
         sleepTime=0.1)
     
