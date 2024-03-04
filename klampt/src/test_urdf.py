@@ -2,6 +2,7 @@ from klampt import WorldModel, vis
 from time import sleep
 
 urdf = "sysmap"
+# urdf = "sysmap_liquide"
 world = WorldModel()
 # res = world.loadFile("../urdf/world.xml")
 res = world.loadRobot("../urdf/{}.urdf".format(urdf))
@@ -20,6 +21,6 @@ for linkIndex in range(world.numRobotLinks(robotNum)):
 vis.show()
 while vis.shown():
 
-    print(vis.getItemConfig(("world",urdf)))
+    # print(vis.getItemConfig(("world",urdf)))
     sleep(0.1)
 vis.kill()

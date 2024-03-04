@@ -139,21 +139,6 @@
         </collision>
     </link>
 
-    <link name="electrique_plateau">
-        <visual>
-            <origin rpy="1.57 0.0 0.0" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/5_ZoneElec_plateau_optimized.stl"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin rpy="1.57 0.0 0.0" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/5_ZoneElec_plateau_convexHull.stl"/>
-            </geometry>
-        </collision>
-    </link>
-
     <link name="batterie">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
@@ -377,12 +362,6 @@
         <origin xyz="-0.1179 -0.004 0.0" rpy="0.0 0.0 0.0"/>
         <parent link="platine"/>
         <child link="electrique"/>
-    </joint>
-
-    <joint name="platine_electriquePlateau" type="fixed">
-        <origin xyz="-0.1179 -0.004 0.0" rpy="0.0 0.0 0.0"/>
-        <parent link="platine"/>
-        <child link="electrique_plateau"/>
     </joint>
 
     <joint name="platine_batterie" type="fixed">
