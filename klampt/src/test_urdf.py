@@ -21,6 +21,6 @@ for linkIndex in range(world.numRobotLinks(robotNum)):
 vis.show()
 while vis.shown():
 
-    # print(vis.getItemConfig(("world",urdf)))
+    print(vis.getItemConfig(("world",urdf)))
     sleep(0.1)
 vis.kill()
