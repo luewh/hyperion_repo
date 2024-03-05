@@ -2,17 +2,31 @@
 
 <robot name="sysmap">
 
+    <material name="black">
+        <color rgba="0.24 0.2 0.21 1"/>
+    </material>
+
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+
+    <material name="yellow">
+        <color rgba="1 1 0 1"/>
+    </material>
+
     <link name="world"/>
     
     <link name="platine">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="white"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/1_Platine_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="white"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/1_Platine_convexHull.stl"/>
             </geometry>
@@ -22,12 +36,14 @@
     <link name="aileron">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="white"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/2_SupportAileron_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="white"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/2_SupportAileron_convexHull.stl"/>
             </geometry>
@@ -37,12 +53,14 @@
     <link name="aileron_camera">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/2_SupportAileron_camera_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/2_SupportAileron_camera_convexHull.stl"/>
             </geometry>
@@ -52,12 +70,14 @@
     <link name="stockage_boite">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_optimized.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_convexHull.stl" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -67,12 +87,14 @@
     <link name="stockage_couvercle">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_optimized.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_convexHull.stl" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -82,12 +104,14 @@
     <link name="stockage_boite2">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_optimized.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_convexHull.stl" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -97,12 +121,14 @@
     <link name="stockage_couvercle2">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_optimized.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_convexHull.stl" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -112,12 +138,14 @@
     <link name="stockage_boite3">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_optimized.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_convexHull.stl" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -127,72 +155,31 @@
     <link name="stockage_couvercle3">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_optimized.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_convexHull.stl" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
     </link>
 
-    <!-- <link name="stockage_liquide">
-        <visual>
-            <origin rpy="1.57 0.0 -3.6652" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_optimized.stl"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin rpy="1.57 0.0 -3.6652" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_convexHull.stl"/>
-            </geometry>
-        </collision>
-    </link>
-
-    <link name="stockage_liquide2">
-        <visual>
-            <origin rpy="1.57 0.0 -3.6652" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_optimized.stl"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin rpy="1.57 0.0 -3.6652" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_convexHull.stl"/>
-            </geometry>
-        </collision>
-    </link>
-
-    <link name="stockage_liquide3">
-        <visual>
-            <origin rpy="1.57 0.0 -3.6652" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_optimized.stl"/>
-            </geometry>
-        </visual>
-        <collision>
-            <origin rpy="1.57 0.0 -3.6652" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_convexHull.stl"/>
-            </geometry>
-        </collision>
-    </link> -->
-
     <link name="electrique">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/5_ZoneElec_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/5_ZoneElec_convexHull.stl"/>
             </geometry>
@@ -202,12 +189,14 @@
     <link name="batterie">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/6_ZoneBatterie.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/6_ZoneBatterie.stl"/>
             </geometry>
@@ -217,12 +206,14 @@
     <link name="base">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_1_scara_base_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_1_scara_base_convexHull.stl"/>
             </geometry>
@@ -232,12 +223,14 @@
     <link name="colonne">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_2_scara_colonne_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_2_scara_colonne_convexHull.stl"/>
             </geometry>
@@ -247,12 +240,14 @@
     <link name="interne">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="white"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_3_scara_interne_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="white"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_3_scara_interne_convexHull.stl"/>
             </geometry>
@@ -262,12 +257,14 @@
     <link name="externe">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_4_scara_externe_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_4_scara_externe_convexHull.stl"/>
             </geometry>
@@ -277,12 +274,14 @@
     <link name="poignet">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_5_scara_poignet_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_5_scara_poignet_convexHull.stl"/>
             </geometry>
@@ -292,12 +291,14 @@
     <link name="verin">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="white"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_6_scara_verin_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="white"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_6_scara_verin_convexHull.stl"/>
             </geometry>
@@ -307,12 +308,14 @@
     <link name="pince_base">
         <visual>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_base_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin rpy="1.57 0.0 0.0" />
+            <material name="black"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_base_convexHull.stl"/>
             </geometry>
@@ -322,12 +325,14 @@
     <link name="doigt1">
         <visual>
             <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
             </geometry>
@@ -337,12 +342,14 @@
     <link name="doigt2">
         <visual>
             <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
             </geometry>
@@ -352,12 +359,14 @@
     <link name="doigt3">
         <visual>
             <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_optimized.stl"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0.0 0.0 0.0" rpy="1.57 -2.094 0.0"/>
+            <material name="yellow"/>
             <geometry>
                 <mesh filename="package://klampt/meshes/7_7_scara_pince_doigt_convexHull.stl"/>
             </geometry>
@@ -441,7 +450,7 @@
         <parent link="base"/>
         <child link="colonne"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="0" upper="6.13" effort="0.0" velocity="0.01"/>
+        <limit lower="0" upper="6.13" effort="0.0" velocity="0.6"/>
     </joint>
 
     <joint name="colonne_interne" type="prismatic">
@@ -449,7 +458,7 @@
         <parent link="colonne"/>
         <child link="interne"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-0.2789" upper="0" effort="0.0" velocity="0.01"/>
+        <limit lower="-0.2789" upper="0" effort="0.0" velocity="0.05"/>
     </joint>
 
     <joint name="interne_externe" type="revolute">
@@ -457,7 +466,7 @@
         <parent link="interne"/>
         <child link="externe"/>
         <axis xyz="0.0 0.0 -1.0"/>
-        <limit lower="0.0" upper="4.54" effort="0.0" velocity="0.01"/>
+        <limit lower="0.0" upper="4.54" effort="0.0" velocity="0.6"/>
     </joint>
 
     <joint name="externe_poignet" type="revolute">
@@ -465,7 +474,7 @@
         <parent link="externe"/>
         <child link="poignet"/>
         <axis xyz="0.0 0.0 -1.0"/>
-        <limit lower="0" upper="6.35" effort="0.0" velocity="0.01"/>
+        <limit lower="0" upper="6.35" effort="0.0" velocity="0.6"/>
     </joint>
 
     <joint name="poignet_verin" type="prismatic">
@@ -473,7 +482,7 @@
         <parent link="poignet"/>
         <child link="verin"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="-0.15" upper="0.0" effort="0.0" velocity="0.01"/>
+        <limit lower="-0.15" upper="0.0" effort="0.0" velocity="0.15"/>
     </joint>
 
     <joint name="verin_pince" type="fixed">
@@ -487,7 +496,7 @@
         <parent link="pince_base"/>
         <child link="doigt1"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.01"/>
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.6"/>
     </joint>
 
     <joint name="pince_doigt2" type="revolute">
@@ -495,7 +504,7 @@
         <parent link="pince_base"/>
         <child link="doigt2"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.01"/>
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.6"/>
         <mimic joint="pince_doigt1" multiplier="1" offset="0"/>
     </joint>
 
@@ -504,7 +513,7 @@
         <parent link="pince_base"/>
         <child link="doigt3"/>
         <axis xyz="0.0 0.0 1.0"/>
-        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.01"/>
+        <limit lower="0" upper="0.8346" effort="0.0" velocity="0.6"/>
         <mimic joint="pince_doigt1" multiplier="1" offset="0"/>
     </joint>
 
@@ -515,24 +524,6 @@
         <axis xyz="0.0 0.0 1.0"/>
         <limit lower="-0.05" upper="0.08" effort="0.0" velocity="0.0"/>
     </joint>
-
-    <!-- <joint name="platine_stockageLiquide" type="fixed">
-        <origin xyz="-0.2789 -0.06397 0.0" rpy="0.0 0.0 0.0"/>
-        <parent link="platine"/>
-        <child link="stockage_liquide"/>
-    </joint>
-
-    <joint name="platine_stockageLiquide2" type="fixed">
-        <origin xyz="-0.2789 0.05803 0.0" rpy="0.0 0.0 0.0"/>
-        <parent link="platine"/>
-        <child link="stockage_liquide2"/>
-    </joint>
-
-    <joint name="platine_stockageLiquide3" type="fixed">
-        <origin xyz="-0.2789 0.18003 0.0" rpy="0.0 0.0 0.0"/>
-        <parent link="platine"/>
-        <child link="stockage_liquide3"/>
-    </joint> -->
 
     <!-- <klampt package_root="../../" flip_yz="0" use_vis_geom="1"  freeze_root_link="0" > -->
 </robot>

@@ -3,6 +3,9 @@
     <node name="camera_vision_globale" pkg="vision" type="vision_global.py" output="screen" />
     <node name="camera_prelevement" pkg="vision" type="prelevement.py" output="screen" />
     <node name="camera_coude" pkg="vision" type="coude.py" output="screen" />
-    <!-- <node name="camera_pince" pkg="vision" type="pince.py" /> -->
+
+    <node name="gpio" pkg="motor" type="gpio.py" output="screen" />
+    
+    <node name="can" pkg="communication_can" type="can_send.py" output="screen" />
 
 </launch>

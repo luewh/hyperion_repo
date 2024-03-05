@@ -13,7 +13,7 @@
   </include>
 
   <!-- Set the robot urdf on the parameter server -->
-  <param name="robot_description" textfile="$(find klampt)/urdf/sysmap2_ros.urdf" />
+  <param name="robot_description" textfile="$(find klampt)/urdf/sysmap_liquide.urdf" />
 
   <!-- Unpause the simulation after loading the robot model -->
   <arg name="unpause" value="$(eval '' if arg('paused') else '-unpause')" />
@@ -23,7 +23,7 @@
     respawn="false" output="screen" />
 
   <!-- Load the controller parameters onto the parameter server -->
-  <rosparam file="$(find moveit_hyperion)/config/gazebo_controllers.yaml" />
+  <rosparam file="$(find moveit_liquide)/config/gazebo_controllers.yaml" />
   <include file="$(dirname)/ros_controllers.launch"/>
 
   <!-- Spawn the Gazebo ROS controllers -->

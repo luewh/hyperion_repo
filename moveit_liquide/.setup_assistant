@@ -1,11 +1,11 @@
 moveit_setup_assistant_config:
   URDF:
     package: klampt
-    relative_path: urdf/sysmap2_ros.urdf
+    relative_path: urdf/sysmap_liquide.urdf
     xacro_args: ""
   SRDF:
     relative_path: config/sysmap.srdf
   CONFIG:
     author_name: luezhi
     author_email: sunluezhi520@gmail.com
-    generated_timestamp: 1709676722
+    generated_timestamp: 1709681273

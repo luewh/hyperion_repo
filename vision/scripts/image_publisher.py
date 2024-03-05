@@ -8,7 +8,7 @@ from cv_bridge import CvBridge
 from colorama import Fore, Style
 
 import os
-os.environ['OPENCV_LOG_LEVEL'] = "SILENT"
+os.environ['OPENCV_LOG_LEVEL'] = "FATAL"
 os.environ['GST_DEBUG'] = "0"
 
 def imPub(camera_path,camera_topic,hz,rotation=0):
@@ -58,7 +58,7 @@ def imPub(camera_path,camera_topic,hz,rotation=0):
             capture.open(camera_path)
             if not capture.isOpened():
                 print(Fore.RED + 'Pas de camera disponible : "{}"'.format(camera_path) + Style.RESET_ALL)
-                rospy.Rate(0.5).sleep()
+                rospy.Rate(0.1).sleep()
             else:
                 print(Fore.GREEN + 'Camera disponible : "{}"'.format(camera_path) + Style.RESET_ALL)
             

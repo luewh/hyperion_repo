@@ -33,23 +33,23 @@ joint_limits:
     max_velocity: 0.6
     has_acceleration_limits: false
     max_acceleration: 0
+  platine_stockageLiquide:
+    has_velocity_limits: true
+    max_velocity: 0.01
+    has_acceleration_limits: false
+    max_acceleration: 0
+  platine_stockageLiquide2:
+    has_velocity_limits: true
+    max_velocity: 0.01
+    has_acceleration_limits: false
+    max_acceleration: 0
+  platine_stockageLiquide3:
+    has_velocity_limits: true
+    max_velocity: 0.01
+    has_acceleration_limits: false
+    max_acceleration: 0
   poignet_verin:
     has_velocity_limits: true
     max_velocity: 0.15
-    has_acceleration_limits: false
-    max_acceleration: 0
-  stockageBoite_couvercle:
-    has_velocity_limits: false
-    max_velocity: 0
-    has_acceleration_limits: false
-    max_acceleration: 0
-  stockageBoite_couvercle2:
-    has_velocity_limits: false
-    max_velocity: 0
-    has_acceleration_limits: false
-    max_acceleration: 0
-  stockageBoite_couvercle3:
-    has_velocity_limits: false
-    max_velocity: 0
     has_acceleration_limits: false
     max_acceleration: 0

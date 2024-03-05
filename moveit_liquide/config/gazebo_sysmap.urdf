@@ -4,7 +4,10 @@
         <color rgba="0.24 0.2 0.21 1" />
     </material>
     <material name="white">
-        <color rgba="1 1 1 1" />
+        <color rgba="0.9 0.9 0.9 1" />
+    </material>
+    <material name="whiteT">
+        <color rgba="0.9 0.9 0.9 0.9" />
     </material>
     <material name="yellow">
         <color rgba="1 1 0 1" />
@@ -73,19 +76,19 @@
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
         </inertial>
     </link>
-    <link name="stockage_boite">
+    <link name="stockage_liquide">
         <visual>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
+            <origin rpy="1.57 0.0 -3.6652" />
+            <material name="whiteT" />
             <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_optimized.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_optimized.stl" />
             </geometry>
         </visual>
         <collision>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
+            <origin rpy="1.57 0.0 -3.6652" />
+            <material name="whiteT" />
             <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_convexHull.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_convexHull.stl" />
             </geometry>
         </collision>
         <inertial>
@@ -94,19 +97,19 @@
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
         </inertial>
     </link>
-    <link name="stockage_couvercle">
+    <link name="stockage_liquide2">
         <visual>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
+            <origin rpy="1.57 0.0 -3.6652" />
+            <material name="whiteT" />
             <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_optimized.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_optimized.stl" />
             </geometry>
         </visual>
         <collision>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
+            <origin rpy="1.57 0.0 -3.6652" />
+            <material name="whiteT" />
             <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_convexHull.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_convexHull.stl" />
             </geometry>
         </collision>
         <inertial>
@@ -115,82 +118,19 @@
             <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
         </inertial>
     </link>
-    <link name="stockage_boite2">
+    <link name="stockage_liquide3">
         <visual>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
+            <origin rpy="1.57 0.0 -3.6652" />
+            <material name="whiteT" />
             <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_optimized.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_optimized.stl" />
             </geometry>
         </visual>
         <collision>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
+            <origin rpy="1.57 0.0 -3.6652" />
+            <material name="whiteT" />
             <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_convexHull.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-        </collision>
-        <inertial>
-            <mass value="0.1" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
-        </inertial>
-    </link>
-    <link name="stockage_couvercle2">
-        <visual>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_optimized.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-        </visual>
-        <collision>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_convexHull.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-        </collision>
-        <inertial>
-            <mass value="0.1" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
-        </inertial>
-    </link>
-    <link name="stockage_boite3">
-        <visual>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_optimized.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-        </visual>
-        <collision>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_boite_convexHull.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-        </collision>
-        <inertial>
-            <mass value="0.1" />
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <inertia ixx="0.03" iyy="0.03" izz="0.03" ixy="0.0" ixz="0.0" iyz="0.0" />
-        </inertial>
-    </link>
-    <link name="stockage_couvercle3">
-        <visual>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_optimized.stl" scale="0.001 0.001 0.001" />
-            </geometry>
-        </visual>
-        <collision>
-            <origin rpy="1.57 0.0 0.0" />
-            <material name="black" />
-            <geometry>
-                <mesh filename="package://klampt/meshes/3_ZoneStockage_couvercle_convexHull.stl" scale="0.001 0.001 0.001" />
+                <mesh filename="package://klampt/meshes/3_ZoneStockage_liquide_convexHull.stl" />
             </geometry>
         </collision>
         <inertial>
@@ -461,41 +401,26 @@
         <parent link="platine" />
         <child link="aileron" />
     </joint>
-    <joint name="platine_stockageBoite" type="fixed">
-        <origin xyz="-0.2789 -0.06397 0.0" rpy="1.57 0.0 -1.57" />
+    <joint name="platine_stockageLiquide" type="prismatic">
+        <origin xyz="-0.2789 -0.06397 0.0" rpy="0.0 0.0 0.0" />
         <parent link="platine" />
-        <child link="stockage_boite" />
+        <child link="stockage_liquide" />
+        <axis xyz="0.0 0.0 1.0" />
+        <limit lower="0" upper="0" effort="0.0" velocity="0.01" />
     </joint>
-    <joint name="stockageBoite_couvercle" type="revolute">
-        <origin xyz="-0.0185 0.1203 0.1528" rpy="-0.117 0.0 0.0" />
-        <parent link="stockage_boite" />
-        <child link="stockage_couvercle" />
-        <axis xyz="-1.0 0.0 0.0" />
-        <limit lower="0.0" upper="1.453" effort="0.0" velocity="0.0" />
-    </joint>
-    <joint name="platine_stockageBoite2" type="fixed">
-        <origin xyz="-0.2789 0.05803 0.0" rpy="1.57 0.0 -1.57" />
+    <joint name="platine_stockageLiquide2" type="prismatic">
+        <origin xyz="-0.2789 0.05803 0.0" rpy="0.0 0.0 0.0" />
         <parent link="platine" />
-        <child link="stockage_boite2" />
+        <child link="stockage_liquide2" />
+        <axis xyz="0.0 0.0 1.0" />
+        <limit lower="0" upper="0" effort="0.0" velocity="0.01" />
     </joint>
-    <joint name="stockageBoite_couvercle2" type="revolute">
-        <origin xyz="-0.0185 0.1203 0.1528" rpy="-0.117 0.0 0.0" />
-        <parent link="stockage_boite2" />
-        <child link="stockage_couvercle2" />
-        <axis xyz="-1.0 0.0 0.0" />
-        <limit lower="0.0" upper="1.453" effort="0.0" velocity="0.0" />
-    </joint>
-    <joint name="platine_stockageBoite3" type="fixed">
-        <origin xyz="-0.2789 0.18003 0.0" rpy="1.57 0.0 -1.57" />
+    <joint name="platine_stockageLiquide3" type="prismatic">
+        <origin xyz="-0.2789 0.18003 0.0" rpy="0.0 0.0 0.0" />
         <parent link="platine" />
-        <child link="stockage_boite3" />
-    </joint>
-    <joint name="stockageBoite_couvercle3" type="revolute">
-        <origin xyz="-0.0185 0.1203 0.1528" rpy="-0.117 0.0 0.0" />
-        <parent link="stockage_boite3" />
-        <child link="stockage_couvercle3" />
-        <axis xyz="-1.0 0.0 0.0" />
-        <limit lower="0.0" upper="1.453" effort="0.0" velocity="0.0" />
+        <child link="stockage_liquide3" />
+        <axis xyz="0.0 0.0 1.0" />
+        <limit lower="0" upper="0" effort="0.0" velocity="0.01" />
     </joint>
     <joint name="platine_electrique" type="fixed">
         <origin xyz="-0.1179 -0.004 0.0" rpy="0.0 0.0 0.0" />
@@ -583,32 +508,32 @@
         <limit lower="-0.05" upper="0.08" effort="0.0" velocity="0.0" />
     </joint>
     <!-- <klampt package_root="../../" flip_yz="0" use_vis_geom="1"  freeze_root_link="0" > -->
-    <transmission name="trans_stockageBoite_couvercle">
+    <transmission name="trans_platine_stockageLiquide">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="stockageBoite_couvercle">
+        <joint name="platine_stockageLiquide">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="stockageBoite_couvercle_motor">
+        <actuator name="platine_stockageLiquide_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_stockageBoite_couvercle2">
+    <transmission name="trans_platine_stockageLiquide2">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="stockageBoite_couvercle2">
+        <joint name="platine_stockageLiquide2">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="stockageBoite_couvercle2_motor">
+        <actuator name="platine_stockageLiquide2_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_stockageBoite_couvercle3">
+    <transmission name="trans_platine_stockageLiquide3">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="stockageBoite_couvercle3">
+        <joint name="platine_stockageLiquide3">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="stockageBoite_couvercle3_motor">
+        <actuator name="platine_stockageLiquide3_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>

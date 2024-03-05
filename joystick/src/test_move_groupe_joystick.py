@@ -11,7 +11,7 @@ from geometry_msgs.msg import Quaternion, Point
 import sys
 import copy
 import math
-# from time import sleep
+from time import sleep
 from threading import Thread, Event
 
 from joystick import Joystick
@@ -84,7 +84,7 @@ class Joystick_MoveGroupe (Joystick):
         # rospy.Subscriber('/home', Bool, self.homeCallback)
         
         # tcp init
-        tcp_marker_points_lenght = 10
+        tcp_marker_points_lenght = 60
         self.tcp_pub = rospy.Publisher('/tcp', Marker, queue_size = tcp_marker_points_lenght, latch=True)
         self.tcp_marker = Marker()
         self.tcp_marker.header.frame_id = "world"
@@ -142,7 +142,6 @@ class Joystick_MoveGroupe (Joystick):
         self.scene.remove_world_object("poussière_plateau")
         self.scene.remove_world_object("liquide_plateau")
         self.scene.remove_world_object("frottis_plateau")
-        
         
     def printRed(self,text, end='\r\n'):
         # print(" "*120, end='\r')
@@ -300,6 +299,8 @@ class Joystick_MoveGroupe (Joystick):
         # arm go pick/drop pose
         self.move_group_arm.go(pickPose, wait=True)
         
+        sleep(1)
+        
         if event.is_set():
             return
         if pick:
@@ -309,10 +310,14 @@ class Joystick_MoveGroupe (Joystick):
             # no action needed
             pass
         
+        sleep(1)
+        
         if event.is_set():
             return
         # arm down cartesian
         self.armMove([0,0,-pickDist],wait=True)
+        
+        sleep(1)
         
         if event.is_set():
             return
@@ -410,7 +415,6 @@ class Joystick_MoveGroupe (Joystick):
         if current_joints[1] > 0.1:
             self.printRed("please close the gripper", end="\r")
             return
-        
         
         # init thread
         event = Event()
@@ -588,7 +592,6 @@ class Joystick_MoveGroupe (Joystick):
             self.preleveEtat3[self.modification_mode_index] = 1
             self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
     
-    
     # def home(self):
     #     if self.macro_position_zero and not self.macro_position_zero_prev:
     #         # tell physical scara to go home
@@ -670,30 +673,42 @@ class Joystick_MoveGroupe (Joystick):
         # go top left
         self.armMove([0.063/self.scale_pos,0.048/self.scale_pos,0],wait=True,collision=True)
         
+        sleep(0.5)
+        
         if event.is_set():
             return
         # down
         self.armMove([-0.126/self.scale_pos,0,0],wait=True,collision=True)
         
+        sleep(0.5)
+        
         if event.is_set():
             return
         # right
         self.armMove([0,-0.048/self.scale_pos,0],wait=True,collision=True)
+        
+        sleep(0.5)
         
         if event.is_set():
             return
         # up
         self.armMove([0.126/self.scale_pos,0,0],wait=True,collision=True)
         
+        sleep(0.5)
+        
         if event.is_set():
             return
         # right
         self.armMove([0,-0.048/self.scale_pos,0],wait=True,collision=True)
         
+        sleep(0.5)
+        
         if event.is_set():
             return
         # down
         self.armMove([-0.126/self.scale_pos,0,0],wait=True,collision=True)
+        
+        sleep(0.5)
         
         if event.is_set():
             return
@@ -707,30 +722,42 @@ class Joystick_MoveGroupe (Joystick):
         # go top left
         self.armMove([0.063/self.scale_pos,0.048/self.scale_pos,0],wait=True,collision=True)
         
+        sleep(0.5)
+        
         if event.is_set():
             return
         # down
         self.armMove([-0.126/self.scale_pos,0,0],wait=True,collision=True)
         
+        sleep(0.5)
+        
         if event.is_set():
             return
         # right
         self.armMove([0,-0.048/self.scale_pos,0],wait=True,collision=True)
+        
+        sleep(0.5)
         
         if event.is_set():
             return
         # up
         self.armMove([0.126/self.scale_pos,0,0],wait=True,collision=True)
         
+        sleep(0.5)
+        
         if event.is_set():
             return
         # right
         self.armMove([0,-0.048/self.scale_pos,0],wait=True,collision=True)
         
+        sleep(0.5)
+        
         if event.is_set():
             return
         # down
         self.armMove([-0.126/self.scale_pos,0,0],wait=True,collision=True)
+        
+        sleep(0.5)
         
         if event.is_set():
             return
@@ -812,7 +839,6 @@ class Joystick_MoveGroupe (Joystick):
         
         self.printGreen("joystick exit")
         
-
 if __name__ == '__main__':
     try:
         joystick_moveGroupe = Joystick_MoveGroupe(
