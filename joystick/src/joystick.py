@@ -29,7 +29,7 @@ class Joystick():
         self.macro_position_zero = False
         self.macro_frotti_poussière = False
         self.prelevement_1_2_3 = 0
-        self.modification_mode_index = 0
+        self.modification_mode_index = 1
         self.modification_mode_list = ["poussière","solide","liquide","frottis"]
         self.on_off_camera = False
         self.on_off_lumiere = False

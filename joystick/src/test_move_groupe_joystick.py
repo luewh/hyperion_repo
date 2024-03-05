@@ -55,9 +55,9 @@ class Joystick_MoveGroupe (Joystick):
         self.scale_pos = scale_pos
         self.scale_rotation = scale_rotation
         
-        self.prelevFrottisPose = [[2.33,0,4.53,2.73],
-                                  [2.43,0,4.10,3.71],
-                                  [2.01,0,4.30,3.14]]
+        self.prelevFrottisPose = [[2.33, 0, 4.53, 2.73],
+                                  [1.97, 0, 4.45, 2.86],
+                                  [2.01, 0, 4.30, 3.14]]
         
         self.prelevLiquidePose = [[2.33,0,4.53,2.73],
                                   [2.43,0,4.10,3.71],
@@ -131,10 +131,17 @@ class Joystick_MoveGroupe (Joystick):
         self.preleveEtat2_pub.publish(0)
         self.preleveEtat3_pub.publish(0)
         
+        # plateau init
+        self.poseStampedFrottis = geometry_msgs.msg.PoseStamped()
+        self.poseStampedFrottis.header.frame_id = "electrique"
+        self.poseStampedFrottis.pose.orientation.x = 0.7068
+        self.poseStampedFrottis.pose.orientation.w = 0.7074
+        self.poseStamped = copy.deepcopy(self.poseStampedFrottis)
+        self.poseStamped.pose.position = Point(-0.037,-0.005,0.0625)
         self.meshPath = __file__.replace("/joystick/src/test_move_groupe_joystick.py","/klampt/meshes/")
-        self.frottis1Pose = Point(-0.052,0.12,0.0655)
-        self.frottis2Pose = Point(-0.025,0.259,0.0655)
-        self.frottis3Pose = Point(-0.082,0.259,0.0655)
+        self.scene.remove_world_object("poussière_plateau")
+        self.scene.remove_world_object("liquide_plateau")
+        self.scene.remove_world_object("frottis_plateau")
         
         
     def printRed(self,text, end='\r\n'):
@@ -459,7 +466,7 @@ class Joystick_MoveGroupe (Joystick):
         # init drop thread
         event = Event()
         dropTask = Thread(target=self.pickDropMove,
-                          args=(dropPose, 0, False, event, "frottis{}".format(numberStock)))
+                          args=(dropPose, 0, False, event))
         
         # run thread
         dropTask.start()
@@ -573,16 +580,20 @@ class Joystick_MoveGroupe (Joystick):
     #         self.homeDone = True
     
     def tcpUpdate(self):
-        while True:
-            verinPos, doigtAngles = self.move_group_hand.get_current_joint_values()
-            doigtAngles -= 0.40387
-            toolCenterPoint = self.move_group_arm.get_current_pose().pose.position
-            toolCenterPoint.z += -0.049 -0.025 -0.072 -math.cos(doigtAngles)*0.11509 +verinPos
-            self.tcp_marker.points = self.tcp_marker.points[1:] + [toolCenterPoint]
-            self.tcp_pub.publish(self.tcp_marker)
-            self.rate.sleep()
+        while not rospy.is_shutdown():
+            try:
+                verinPos, doigtAngles = self.move_group_hand.get_current_joint_values()
+                doigtAngles -= 0.40387
+                toolCenterPoint = self.move_group_arm.get_current_pose().pose.position
+                toolCenterPoint.z += -0.049 -0.025 -0.072 -math.cos(doigtAngles)*0.11509 +verinPos
+                self.tcp_marker.points = self.tcp_marker.points[1:] + [toolCenterPoint]
+                self.tcp_pub.publish(self.tcp_marker)
+                self.rate.sleep()
+            except:
+                pass
+        self.printGreen("\ntcp exit")
     
-    def preleveModeUpdate(self):
+    def preleveModeUpdate(self,preleveMode):
         if self.modification_mode_index != self.modification_mode_index_prev:
             self.preleveMode_pub.publish(self.modification_mode_index+1)
             
@@ -594,6 +605,27 @@ class Joystick_MoveGroupe (Joystick):
             self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
             self.preleveEtat3_prev[self.modification_mode_index] = self.preleveEtat3[self.modification_mode_index]
             
+            # change plateau
+            if preleveMode == "poussière":
+                self.printGreen("adding poussière plateau")
+                self.scene.add_mesh("poussière_plateau", self.poseStamped,
+                                    self.meshPath+"5_ZoneElec_plateau_poussiere.stl")
+            elif preleveMode == "liquide":
+                self.printGreen("adding liquide plateau")
+                self.scene.add_mesh("liquide_plateau", self.poseStamped,
+                                    self.meshPath+"5_ZoneElec_plateau_liquide_optimized.stl")
+            elif preleveMode == "frottis":
+                self.printGreen("adding frottis plateau")
+                self.scene.add_mesh("frottis_plateau", self.poseStampedFrottis,
+                                    self.meshPath+"5_ZoneElec_plateau_frottis_optimized.stl")
+            
+            if self.modification_mode_list[self.modification_mode_index_prev] == "poussière":
+                self.scene.remove_world_object("poussière_plateau")
+            elif self.modification_mode_list[self.modification_mode_index_prev] == "liquide":
+                self.scene.remove_world_object("liquide_plateau")
+            elif self.modification_mode_list[self.modification_mode_index_prev] == "frottis":
+                self.scene.remove_world_object("frottis_plateau")
+                
             self.modification_mode_index_prev = self.modification_mode_index
     
     def frottisMacroThread(self, event):
@@ -707,55 +739,59 @@ class Joystick_MoveGroupe (Joystick):
                     self.joystickUpdate()
                     self.rate.sleep()
                 self.printGreen("frottis macro done")
-            
+    
     # movement control loop
     def run(self):
-        while True:
-            try:
-                self.joystickUpdate()
-                # joint movement, wait=True
-                self.poignetMove()
-                self.baseMove()
-                self.pinceMove()
-                # arm movement, wait=False
-                poseCommand = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
-                self.armMove(poseCommand, wait=False)
-                self.poseCommand_prev = poseCommand
-                # macro movement, thread
-                # self.home()
-                self.macroFrottis()
+        while not rospy.is_shutdown():
+            self.joystickUpdate()
+            
+            # joint movement, wait=True
+            self.poignetMove()
+            self.baseMove()
+            self.pinceMove()
+            
+            # arm movement, wait=False
+            poseCommand = [self.effecteur_x_vitesse,self.effecteur_y_vitesse,self.effecteur_z_vitesse]
+            self.armMove(poseCommand, wait=False)
+            self.poseCommand_prev = poseCommand
+            
+            # macro movement, thread
+            # self.home()
+            self.macroFrottis()
+            
+            preleveMode = self.modification_mode_list[self.modification_mode_index]
+            self.preleveModeUpdate(preleveMode)
+            
+            if preleveMode in ["frottis","liquide"]:
+                self.preleveFrottisLiquide(preleveMode)
+            elif preleveMode == "poussière":
+                self.prelevePoussiere()
+            elif preleveMode == "solide" and self.prelevement_1_2_3 != 0:
+                self.printYellow("Pas d'outil de prélèvement en mode solide")
                 
-                self.preleveModeUpdate()
-                
-                preleveMode = self.modification_mode_list[self.modification_mode_index]
-                if preleveMode in ["frottis","liquide"]:
-                    self.preleveFrottisLiquide(preleveMode)
-                elif preleveMode == "poussière":
-                    self.prelevePoussiere()
-                    
-                if preleveMode in ["solide","frottis"]:
-                    self.stockSolideFrottis()
-                elif preleveMode == "liquide":
-                    self.stockLiquide()
-                elif preleveMode == "poussière":
-                    self.stockPoussiere()
-                
-                # TODO pub lum cam
-                
-                self.rate.sleep()
-            except KeyboardInterrupt:
-                self.printRed("Exiting...")
+            if preleveMode in ["solide","frottis"]:
+                self.stockSolideFrottis()
+            elif preleveMode == "liquide":
+                self.stockLiquide()
+            elif preleveMode == "poussière":
+                self.stockPoussiere()
+            
+            # TODO pub lum cam
+            self.rate.sleep()
+        
+        self.printGreen("joystick exit")
         
 
 if __name__ == '__main__':
     try:
         joystick_moveGroupe = Joystick_MoveGroupe(
-        scale_pos=0.1, # max 1q0cm
+        scale_pos=0.05, # max 5cm
         scale_rotation=0.1, # max 1deg
         sleepTime=0.1)
     
         joystick_moveGroupe.run()
     except rospy.ROSInterruptException:
+        print("stop")
         pass
     
 
