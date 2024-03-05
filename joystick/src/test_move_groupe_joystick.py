@@ -59,9 +59,9 @@ class Joystick_MoveGroupe (Joystick):
                                   [1.97, 0, 4.45, 2.86],
                                   [2.01, 0, 4.30, 3.14]]
         
-        self.prelevLiquidePose = [[2.33,0,4.53,2.73],
-                                  [2.43,0,4.10,3.71],
-                                  [2.01,0,4.30,3.14]]
+        self.prelevLiquidePose = [[2.20, 0, 4.41, 3.67],
+                                  [1.88, 0, 4.39, 1.34],
+                                  [1.92, 0, 4.24, 2.23]]
         
         self.prelevPoussierePose = [2.33,0,4.53,2.73]
         
@@ -107,7 +107,7 @@ class Joystick_MoveGroupe (Joystick):
         self.liqude_pub.publish(0)
         
         # init preleve mode
-        self.modification_mode_index_prev = 0
+        self.modification_mode_index_prev = self.modification_mode_index
         self.preleveMode_pub = rospy.Publisher('IHM/prelevement/PrelevSelectAct', Int8, queue_size=1, latch=True)
         self.preleveMode_pub.publish(self.modification_mode_index+1)
         
@@ -346,18 +346,27 @@ class Joystick_MoveGroupe (Joystick):
         # remember preleve number
         numberPreleve = self.prelevement_1_2_3
         
+        pickLiquide = True
         # get preleve position
         if preleveMode == "frottis":
             pickPose = self.prelevFrottisPose[numberPreleve - 1]
         elif preleveMode == "liquide":
+            if numberPreleve == 1 and self.preleveEtat1[self.modification_mode_index] == 1:
+                pickLiquide = False
+            if numberPreleve == 2 and self.preleveEtat2[self.modification_mode_index] == 1:
+                pickLiquide = False
+            if numberPreleve == 3 and self.preleveEtat3[self.modification_mode_index] == 1:
+                pickLiquide = False
             pickPose = self.prelevLiquidePose[numberPreleve - 1]
+            
         # init thread
         event = Event()
         moveTask = Thread(target=self.pickDropMove,
-                          args=(pickPose, 0.106/self.scale_pos, True, event))
+                          args=(pickPose, 0.106/self.scale_pos, pickLiquide, event))
         
         # run thread
         moveTask.start()
+        self.printGreen("commencer prise d'outil {} {}".format(numberPreleve,preleveMode))
         # update joystick while preleve number not changed and thread not end
         while self.prelevement_1_2_3 == numberPreleve and moveTask.is_alive():
             self.joystickUpdate()
@@ -377,13 +386,13 @@ class Joystick_MoveGroupe (Joystick):
         else:
             # update frottis or liquide preleve state to "Outil équipé"
             if numberPreleve == 1:
-                self.preleveEtat1[self.modification_mode_index] = 1
+                self.preleveEtat1[self.modification_mode_index] = int(pickLiquide)
                 self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
             if numberPreleve == 2:
-                self.preleveEtat2[self.modification_mode_index] = 1
+                self.preleveEtat2[self.modification_mode_index] = int(pickLiquide)
                 self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
             if numberPreleve == 3:
-                self.preleveEtat3[self.modification_mode_index] = 1
+                self.preleveEtat3[self.modification_mode_index] = int(pickLiquide)
                 self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
             self.printYellow("Finished, please release the button...")
             # wait till preleve button released
@@ -525,26 +534,34 @@ class Joystick_MoveGroupe (Joystick):
     def stockPoussiere(self):
         pass
     
-    # redo start pump pub
     def stockLiquide(self):
         if self.macro_stockage_1_2_3 == 0:
             return
         
         # remember liquide number
         numberLiquide = self.macro_stockage_1_2_3
+        # if outil équipé
         
-        # TODO put at end
-        # update preleve etat
+        # update liquide preleve state to "Stockage en cours"
         if numberLiquide == 1:
-            self.preleveEtat1[self.modification_mode_index] = 3
+            if self.preleveEtat1[self.modification_mode_index] != 1:
+                self.printRed("Equipez l'outil {} pour faire du prélèvement liquide".format(numberLiquide))
+                return
+            self.preleveEtat1[self.modification_mode_index] = 2
             self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
             
         if numberLiquide == 2:
-            self.preleveEtat2[self.modification_mode_index] = 3
+            if self.preleveEtat2[self.modification_mode_index] != 1:
+                self.printRed("Equipez l'outil {} pour faire du prélèvement liquide".format(numberLiquide))
+                return
+            self.preleveEtat2[self.modification_mode_index] = 2
             self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
             
         if numberLiquide == 3:
-            self.preleveEtat3[self.modification_mode_index] = 3
+            if self.preleveEtat3[self.modification_mode_index] != 1:
+                self.printRed("Equipez l'outil {} pour faire du prélèvement liquide".format(numberLiquide))
+                return
+            self.preleveEtat3[self.modification_mode_index] = 2
             self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
         
         # start pump
@@ -557,6 +574,20 @@ class Joystick_MoveGroupe (Joystick):
         # stop pump
         self.liqude_pub.publish(0)
         self.printYellow("pump {} stop".format(numberLiquide))
+        
+        # update liquide preleve state to "Outil équipé"
+        if numberLiquide == 1:
+            self.preleveEtat1[self.modification_mode_index] = 1
+            self.preleveEtat1_pub.publish(self.preleveEtat1[self.modification_mode_index])
+            
+        if numberLiquide == 2:
+            self.preleveEtat2[self.modification_mode_index] = 1
+            self.preleveEtat2_pub.publish(self.preleveEtat2[self.modification_mode_index])
+            
+        if numberLiquide == 3:
+            self.preleveEtat3[self.modification_mode_index] = 1
+            self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
+            
     
     # def home(self):
     #     if self.macro_position_zero and not self.macro_position_zero_prev:
@@ -785,10 +816,9 @@ class Joystick_MoveGroupe (Joystick):
 if __name__ == '__main__':
     try:
         joystick_moveGroupe = Joystick_MoveGroupe(
-        scale_pos=0.05, # max 5cm
-        scale_rotation=0.1, # max 1deg
-        sleepTime=0.1)
-    
+            scale_pos=0.02, # max 2cm
+            scale_rotation=0.05, # max 1deg
+            sleepTime=0.1)
         joystick_moveGroupe.run()
     except rospy.ROSInterruptException:
         print("stop")

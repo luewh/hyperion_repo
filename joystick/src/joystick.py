@@ -38,14 +38,14 @@ class Joystick():
         self.effecteur_y_vitesse = 0
         self.effecteur_z_vitesse = 0
         self.effecteur_x_y_and_pince_sensibilite = 2
-        self.effecteur_x_y_and_pince_threshold = 0.15
-        self.effecteur_z_vitesse_constant = 0.05
+        self.effecteur_x_y_and_pince_threshold = 0.1
+        self.effecteur_z_vitesse_constant = 0.1
 
         # négatif pour rotation gauche, positif pour rotation droite,
         self.rotation_pince_vitesse = 0
         self.rotation_vitesse_constant = 1
         self.rotation_base_vitesse = 0
-        self.rotation_base_vitesse_threshold = 0.4
+        self.rotation_base_vitesse_threshold = 0.6
 
         try:
             self.degre_ouverture_pince = round((self.thustmaster.get_axis(3)+1)/2,self.effecteur_x_y_and_pince_sensibilite)
