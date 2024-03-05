@@ -475,7 +475,7 @@ class Joystick_MoveGroupe (Joystick):
         # init drop thread
         event = Event()
         dropTask = Thread(target=self.pickDropMove,
-                          args=(dropPose, 0, False, event))
+                          args=(dropPose, 0.04/self.scale_pos, False, event))
         
         # run thread
         dropTask.start()
@@ -587,7 +587,7 @@ class Joystick_MoveGroupe (Joystick):
         if numberLiquide == 3:
             self.preleveEtat3[self.modification_mode_index] = 1
             self.preleveEtat3_pub.publish(self.preleveEtat3[self.modification_mode_index])
-            
+    
     
     # def home(self):
     #     if self.macro_position_zero and not self.macro_position_zero_prev:
@@ -622,7 +622,7 @@ class Joystick_MoveGroupe (Joystick):
                 self.rate.sleep()
             except:
                 pass
-        self.printGreen("\ntcp exit")
+        self.printGreen("tcp exit")
     
     def preleveModeUpdate(self,preleveMode):
         if self.modification_mode_index != self.modification_mode_index_prev:
