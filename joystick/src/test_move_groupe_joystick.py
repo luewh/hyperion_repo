@@ -11,7 +11,7 @@ from geometry_msgs.msg import Quaternion, Point
 import sys
 import copy
 import math
-from time import sleep
+from time import sleep, time
 from threading import Thread, Event
 
 from joystick import Joystick
@@ -25,7 +25,7 @@ class Joystick_MoveGroupe (Joystick):
     def __init__(self,
                  scale_pos=1.0,
                  scale_rotation=1.0,
-                 sleepTime=0.1) -> None:
+                 sleepTime=0.05) -> None:
         
         # init joystick
         super().__init__(sleepTime=sleepTime,keyboard=False)
@@ -130,7 +130,13 @@ class Joystick_MoveGroupe (Joystick):
         self.preleveEtat1_pub.publish(0)
         self.preleveEtat2_pub.publish(0)
         self.preleveEtat3_pub.publish(0)
-        
+
+        self.eclairage_pub = rospy.Publisher('eclairage', Bool, queue_size=1, latch=True)
+        self.eclairage_pub.publish(False)
+        self.on_off_lumiere_prev = False
+        self.eclairageTempo = 5
+        self.eclairageLastTime = time()
+
         # plateau init
         self.poseStampedFrottis = geometry_msgs.msg.PoseStamped()
         self.poseStampedFrottis.header.frame_id = "electrique"
@@ -155,6 +161,11 @@ class Joystick_MoveGroupe (Joystick):
         # print(" "*120, end='\r')
         print("{}{}{}".format('\033[93m',text,'\033[0m'), end=end)
     
+    def elairage(self):
+        if self.on_off_lumiere != self.on_off_lumiere_prev and self.eclai:
+            self.eclairage_pub.publish(self.on_off_lumiere)
+            self.on_off_lumiere_prev = self.on_off_lumiere
+
     def armMove(self,poseCommand,wait=False,collision=True):
         if poseCommand == [0,0,0]:
             if self.poseCommand_prev != [0,0,0]:

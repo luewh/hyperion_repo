@@ -445,7 +445,7 @@
         <child link="base"/>
     </joint>
 
-    <joint name="base_colonne" type="revolute">
+    <joint name="base_rotation" type="revolute">
         <origin xyz="0.0 0.0 0.03" rpy="0.0 0.0 -5.4044"/>
         <parent link="base"/>
         <child link="colonne"/>
@@ -453,7 +453,7 @@
         <limit lower="0" upper="6.13" effort="0.0" velocity="0.6"/>
     </joint>
 
-    <joint name="colonne_interne" type="prismatic">
+    <joint name="epaule_translation" type="prismatic">
         <origin xyz="0.0 0.0 0.391" rpy="0.0 0.0 0.0"/>
         <parent link="colonne"/>
         <child link="interne"/>
@@ -461,7 +461,7 @@
         <limit lower="-0.2789" upper="0" effort="0.0" velocity="0.05"/>
     </joint>
 
-    <joint name="interne_externe" type="revolute">
+    <joint name="epaule_rotation" type="revolute">
         <origin xyz="0.214559 0.163904 -0.005" rpy="0.0 0.0 2.48"/>
         <parent link="interne"/>
         <child link="externe"/>
@@ -469,15 +469,15 @@
         <limit lower="0.0" upper="4.54" effort="0.0" velocity="0.6"/>
     </joint>
 
-    <joint name="externe_poignet" type="revolute">
+    <joint name="pince_rotation" type="revolute">
         <origin xyz="0.29117 0.13275 0.030" rpy="0.0 0.0 2.36"/>
         <parent link="externe"/>
         <child link="poignet"/>
         <axis xyz="0.0 0.0 -1.0"/>
-        <limit lower="0" upper="6.35" effort="0.0" velocity="0.6"/>
+        <limit lower="0" upper="5.45" effort="0.0" velocity="0.6"/>
     </joint>
 
-    <joint name="poignet_verin" type="prismatic">
+    <joint name="verin" type="prismatic">
         <origin xyz="0.0 0.0 -0.049" rpy="0.0 0.0 0.0"/>
         <parent link="poignet"/>
         <child link="verin"/>
@@ -491,7 +491,7 @@
         <child link="pince_base"/>
     </joint>
 
-    <joint name="pince_doigt1" type="revolute">
+    <joint name="fermeture_pince_ouverture" type="revolute">
         <origin xyz="0.02405 0.07176 0.05466" rpy="0.0 2.094 0.0"/>
         <parent link="pince_base"/>
         <child link="doigt1"/>
@@ -505,7 +505,7 @@
         <child link="doigt2"/>
         <axis xyz="0.0 0.0 1.0"/>
         <limit lower="0" upper="0.8346" effort="0.0" velocity="0.6"/>
-        <mimic joint="pince_doigt1" multiplier="1" offset="0"/>
+        <mimic joint="fermeture_pince_ouverture" multiplier="1" offset="0"/>
     </joint>
 
     <joint name="pince_doigt3" type="revolute">
@@ -514,7 +514,7 @@
         <child link="doigt3"/>
         <axis xyz="0.0 0.0 1.0"/>
         <limit lower="0" upper="0.8346" effort="0.0" velocity="0.6"/>
-        <mimic joint="pince_doigt1" multiplier="1" offset="0"/>
+        <mimic joint="fermeture_pince_ouverture" multiplier="1" offset="0"/>
     </joint>
 
     <joint name="platine_aileron_camera" type="prismatic">

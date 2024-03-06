@@ -15,7 +15,7 @@ class Joystick():
             self.thustmaster = pygame.joystick.Joystick(0)
         except:
             print("---\nno joystick avalable\n---")
-            # exit()
+            exit()
             
         pygame.init()
         
@@ -24,7 +24,7 @@ class Joystick():
             rect = pygame.Rect(0, 0, 20, 20)
             rect.center = window.get_rect().center
         
-        self.macro_stockage_1_2_3 = 1
+        self.macro_stockage_1_2_3 = 0
         self.macro_repliement = False
         self.macro_position_zero = False
         self.macro_frotti_poussière = False

@@ -512,47 +512,47 @@
         <parent link="platine" />
         <child link="base" />
     </joint>
-    <joint name="base_colonne" type="revolute">
+    <joint name="base_rotation" type="revolute">
         <origin xyz="0.0 0.0 0.03" rpy="0.0 0.0 -5.4044" />
         <parent link="base" />
         <child link="colonne" />
         <axis xyz="0.0 0.0 1.0" />
         <limit lower="0" upper="6.13" effort="0.0" velocity="0.6" />
     </joint>
-    <joint name="colonne_interne" type="prismatic">
+    <joint name="epaule_translation" type="prismatic">
         <origin xyz="0.0 0.0 0.391" rpy="0.0 0.0 0.0" />
         <parent link="colonne" />
         <child link="interne" />
         <axis xyz="0.0 0.0 1.0" />
-        <limit lower="-0.2789" upper="0" effort="0.0" velocity="0.015" />
+        <limit lower="-0.2789" upper="0" effort="0.0" velocity="0.05" />
     </joint>
-    <joint name="interne_externe" type="revolute">
+    <joint name="epaule_rotation" type="revolute">
         <origin xyz="0.214559 0.163904 -0.005" rpy="0.0 0.0 2.48" />
         <parent link="interne" />
         <child link="externe" />
         <axis xyz="0.0 0.0 -1.0" />
         <limit lower="0.0" upper="4.54" effort="0.0" velocity="0.6" />
     </joint>
-    <joint name="externe_poignet" type="revolute">
+    <joint name="pince_rotation" type="revolute">
         <origin xyz="0.29117 0.13275 0.030" rpy="0.0 0.0 2.36" />
         <parent link="externe" />
         <child link="poignet" />
         <axis xyz="0.0 0.0 -1.0" />
-        <limit lower="0" upper="6.35" effort="0.0" velocity="0.6" />
+        <limit lower="0" upper="5.45" effort="0.0" velocity="0.6" />
     </joint>
-    <joint name="poignet_verin" type="prismatic">
+    <joint name="verin" type="prismatic">
         <origin xyz="0.0 0.0 -0.049" rpy="0.0 0.0 0.0" />
         <parent link="poignet" />
         <child link="verin" />
         <axis xyz="0.0 0.0 1.0" />
-        <limit lower="-0.15" upper="0.0" effort="0.0" velocity="0.013" />
+        <limit lower="-0.15" upper="0.0" effort="0.0" velocity="0.15" />
     </joint>
     <joint name="verin_pince" type="fixed">
         <origin xyz="0.0 0.0 -0.025" rpy="-1.57 0.0 0.74" />
         <parent link="verin" />
         <child link="pince_base" />
     </joint>
-    <joint name="pince_doigt1" type="revolute">
+    <joint name="fermeture_pince_ouverture" type="revolute">
         <origin xyz="0.02405 0.07176 0.05466" rpy="0.0 2.094 0.0" />
         <parent link="pince_base" />
         <child link="doigt1" />
@@ -565,7 +565,7 @@
         <child link="doigt2" />
         <axis xyz="0.0 0.0 1.0" />
         <limit lower="0" upper="0.8346" effort="0.0" velocity="0.6" />
-        <mimic joint="pince_doigt1" multiplier="1" offset="0" />
+        <mimic joint="fermeture_pince_ouverture" multiplier="1" offset="0" />
     </joint>
     <joint name="pince_doigt3" type="revolute">
         <origin xyz="0.03531 0.07176 -0.04816" rpy="0.0 -2.094 0.0" />
@@ -573,7 +573,7 @@
         <child link="doigt3" />
         <axis xyz="0.0 0.0 1.0" />
         <limit lower="0" upper="0.8346" effort="0.0" velocity="0.6" />
-        <mimic joint="pince_doigt1" multiplier="1" offset="0" />
+        <mimic joint="fermeture_pince_ouverture" multiplier="1" offset="0" />
     </joint>
     <joint name="platine_aileron_camera" type="prismatic">
         <origin xyz="-0.42 0.042 -0.05" rpy="0.0 0.0 0.0" />
@@ -613,62 +613,62 @@
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_base_colonne">
+    <transmission name="trans_base_rotation">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="base_colonne">
+        <joint name="base_rotation">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="base_colonne_motor">
+        <actuator name="base_rotation_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_colonne_interne">
+    <transmission name="trans_epaule_translation">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="colonne_interne">
+        <joint name="epaule_translation">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="colonne_interne_motor">
+        <actuator name="epaule_translation_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_interne_externe">
+    <transmission name="trans_epaule_rotation">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="interne_externe">
+        <joint name="epaule_rotation">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="interne_externe_motor">
+        <actuator name="epaule_rotation_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_externe_poignet">
+    <transmission name="trans_pince_rotation">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="externe_poignet">
+        <joint name="pince_rotation">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="externe_poignet_motor">
+        <actuator name="pince_rotation_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_poignet_verin">
+    <transmission name="trans_verin">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="poignet_verin">
+        <joint name="verin">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="poignet_verin_motor">
+        <actuator name="verin_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
     </transmission>
-    <transmission name="trans_pince_doigt1">
+    <transmission name="trans_fermeture_pince_ouverture">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="pince_doigt1">
+        <joint name="fermeture_pince_ouverture">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="pince_doigt1_motor">
+        <actuator name="fermeture_pince_ouverture_motor">
             <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             <mechanicalReduction>1</mechanicalReduction>
         </actuator>
