@@ -10,15 +10,15 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="scara_arm">
-        <joint name="base_colonne"/>
-        <joint name="colonne_interne"/>
-        <joint name="interne_externe"/>
-        <joint name="externe_poignet"/>
+        <joint name="base_rotation"/>
+        <joint name="epaule_translation"/>
+        <joint name="epaule_rotation"/>
+        <joint name="pince_rotation"/>
     </group>
     <group name="scara_hand">
-        <joint name="poignet_verin"/>
+        <joint name="verin"/>
         <joint name="verin_pince"/>
-        <joint name="pince_doigt1"/>
+        <joint name="fermeture_pince_ouverture"/>
     </group>
     <group name="scara_couvercle">
         <joint name="stockageBoite_couvercle"/>
@@ -27,10 +27,10 @@
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="scara_arm">
-        <joint name="base_colonne" value="0"/>
-        <joint name="colonne_interne" value="0"/>
-        <joint name="externe_poignet" value="0"/>
-        <joint name="interne_externe" value="0"/>
+        <joint name="base_rotation" value="0"/>
+        <joint name="epaule_rotation" value="0"/>
+        <joint name="epaule_translation" value="0"/>
+        <joint name="pince_rotation" value="0"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="scara_hand" parent_link="externe" group="scara_hand"/>

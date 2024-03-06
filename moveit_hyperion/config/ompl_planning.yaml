@@ -193,7 +193,7 @@ scara_arm:
     - AITstar
     - ABITstar
     - BITstar
-  projection_evaluator: joints(base_colonne,colonne_interne)
+  projection_evaluator: joints(base_rotation,epaule_translation)
   longest_valid_segment_fraction: 0.005
 scara_hand:
   planner_configs:

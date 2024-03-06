@@ -2,15 +2,15 @@ controller_list:
   - name: fake_scara_arm_controller
     type: $(arg fake_execution_type)
     joints:
-      - base_colonne
-      - colonne_interne
-      - interne_externe
-      - externe_poignet
+      - base_rotation
+      - epaule_translation
+      - epaule_rotation
+      - pince_rotation
   - name: fake_scara_hand_controller
     type: $(arg fake_execution_type)
     joints:
-      - poignet_verin
-      - pince_doigt1
+      - verin
+      - fermeture_pince_ouverture
   - name: fake_scara_couvercle_controller
     type: $(arg fake_execution_type)
     joints:

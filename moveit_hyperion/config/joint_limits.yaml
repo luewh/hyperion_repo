@@ -8,34 +8,29 @@ default_acceleration_scaling_factor: 0.1
 # Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
-  base_colonne:
+  base_rotation:
     has_velocity_limits: true
     max_velocity: 0.6
     has_acceleration_limits: false
     max_acceleration: 0
-  colonne_interne:
+  epaule_rotation:
+    has_velocity_limits: true
+    max_velocity: 0.6
+    has_acceleration_limits: false
+    max_acceleration: 0
+  epaule_translation:
     has_velocity_limits: true
     max_velocity: 0.05
     has_acceleration_limits: false
     max_acceleration: 0
-  externe_poignet:
+  fermeture_pince_ouverture:
     has_velocity_limits: true
     max_velocity: 0.6
     has_acceleration_limits: false
     max_acceleration: 0
-  interne_externe:
+  pince_rotation:
     has_velocity_limits: true
     max_velocity: 0.6
-    has_acceleration_limits: false
-    max_acceleration: 0
-  pince_doigt1:
-    has_velocity_limits: true
-    max_velocity: 0.6
-    has_acceleration_limits: false
-    max_acceleration: 0
-  poignet_verin:
-    has_velocity_limits: true
-    max_velocity: 0.15
     has_acceleration_limits: false
     max_acceleration: 0
   stockageBoite_couvercle:
@@ -51,5 +46,10 @@ joint_limits:
   stockageBoite_couvercle3:
     has_velocity_limits: false
     max_velocity: 0
+    has_acceleration_limits: false
+    max_acceleration: 0
+  verin:
+    has_velocity_limits: true
+    max_velocity: 0.15
     has_acceleration_limits: false
     max_acceleration: 0
